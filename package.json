@@ -1,0 +1,23 @@
+{
+  "name": "school-parent-ecosystem",
+  "version": "1.0.0",
+  "private": true,
+  "description": "School Parent App and School Management Web Dashboard",
+  "scripts": {
+    "dev": "npm run dev --prefix admin-dashboard",
+    "dev:admin": "npm run dev --prefix admin-dashboard",
+    "dev:parent": "npm start --prefix parent-app",
+    "build:admin": "npm run build --prefix admin-dashboard",
+    "preview:admin": "npm run preview --prefix admin-dashboard"
+  },
+  "keywords": [
+    "school-management",
+    "parent-app",
+    "react",
+    "expo",
+    "supabase"
+  ],
+  "author": "",
+  "license": "ISC"
+}
+
