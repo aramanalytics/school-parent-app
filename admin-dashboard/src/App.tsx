@@ -5,10 +5,10 @@ import { AuthProvider, useAuth, RoleType, getRoleDashboardPath } from '@/context
 import { ParentAuthProvider, useParentAuth } from '@/contexts/ParentAuthContext';
 import { ToastProvider } from '@/components/ui/Toast';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { WelcomeLandingPage } from '@/pages/landing/WelcomeLandingPage';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { ParentLoginPage } from '@/pages/auth/ParentLoginPage';
 import { ParentDashboardPage } from '@/pages/parent/ParentDashboardPage';
-import { DashboardPage } from '@/pages/dashboard/DashboardPage';
 import { SuperAdminDashboardPage } from '@/pages/dashboard/SuperAdminDashboardPage';
 import { SchoolAdminDashboardPage } from '@/pages/dashboard/SchoolAdminDashboardPage';
 import { TeacherDashboardPage } from '@/pages/dashboard/TeacherDashboardPage';
@@ -60,7 +60,6 @@ function ProtectedRoute({
   }
 
   if (allowedRoles && userRole && !allowedRoles.includes(userRole.role)) {
-    // Redirect to the user's authorized role dashboard
     return <Navigate to={getRoleDashboardPath(userRole.role)} replace />;
   }
 
@@ -85,19 +84,45 @@ function ProtectedParentRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-function RoleDefaultRedirect() {
-  const { userRole, loading } = useAuth();
-  if (loading) return null;
-  const target = userRole ? getRoleDashboardPath(userRole.role) : '/login';
-  return <Navigate to={target} replace />;
+/**
+ * Root Route Handler ("/")
+ * If a staff user is logged in -> redirect to their role dashboard.
+ * If a parent user is logged in -> redirect to /parent/dashboard.
+ * Otherwise -> show the animated Welcome Landing Page.
+ */
+function RootIndexRoute() {
+  const { user, userRole, loading: staffLoading } = useAuth();
+  const { parent, loading: parentLoading } = useParentAuth();
+
+  if (staffLoading || parentLoading) {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#3B5BDB]"></div>
+      </div>
+    );
+  }
+
+  // Restore authenticated staff session
+  if (user && userRole) {
+    return <Navigate to={getRoleDashboardPath(userRole.role)} replace />;
+  }
+
+  // Restore authenticated parent session
+  if (parent) {
+    return <Navigate to="/parent/dashboard" replace />;
+  }
+
+  // First time visitor or logged out user
+  return <WelcomeLandingPage />;
 }
 
 function AppRoutes() {
   const { user, userRole, loading } = useAuth();
+  const { parent } = useParentAuth();
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F5F7FB] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#3B5BDB]"></div>
       </div>
     );
@@ -105,7 +130,24 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {/* Staff Login */}
+      {/* 1. Animated Welcome Landing Page */}
+      <Route path="/" element={<RootIndexRoute />} />
+
+      {/* 2. Parent Portal Routes */}
+      <Route
+        path="/parent/login"
+        element={parent ? <Navigate to="/parent/dashboard" replace /> : <ParentLoginPage />}
+      />
+      <Route
+        path="/parent/dashboard"
+        element={
+          <ProtectedParentRoute>
+            <ParentDashboardPage />
+          </ProtectedParentRoute>
+        }
+      />
+
+      {/* 3. Staff & Admin Login */}
       <Route
         path="/login"
         element={
@@ -117,18 +159,7 @@ function AppRoutes() {
         }
       />
 
-      {/* Parent Portal Routes */}
-      <Route path="/parent/login" element={<ParentLoginPage />} />
-      <Route
-        path="/parent/dashboard"
-        element={
-          <ProtectedParentRoute>
-            <ParentDashboardPage />
-          </ProtectedParentRoute>
-        }
-      />
-
-      {/* Staff & Admin Dashboard Layout */}
+      {/* 4. Staff & Admin Protected Layout */}
       <Route
         element={
           <ProtectedRoute>
@@ -136,10 +167,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       >
-        {/* Universal default router: routes to appropriate role dashboard */}
-        <Route path="/" element={<RoleDefaultRedirect />} />
-
-        {/* 1. Super Admin Dashboard Route */}
+        {/* Dedicated Role Dashboards */}
         <Route
           path="/super-admin/dashboard"
           element={
@@ -149,7 +177,6 @@ function AppRoutes() {
           }
         />
 
-        {/* 2. School Admin Dashboard Route */}
         <Route
           path="/admin/dashboard"
           element={
@@ -159,7 +186,6 @@ function AppRoutes() {
           }
         />
 
-        {/* 3. Teacher Dashboard Route */}
         <Route
           path="/teacher/dashboard"
           element={
@@ -169,7 +195,6 @@ function AppRoutes() {
           }
         />
 
-        {/* 4. Accountant Dashboard Route */}
         <Route
           path="/accountant/dashboard"
           element={
@@ -180,7 +205,6 @@ function AppRoutes() {
         />
 
         {/* Operational Modules with Role Safeguards */}
-        {/* People Management: Super Admin & School Admin, Teacher sees scoped list */}
         <Route
           path="/students"
           element={
@@ -206,7 +230,6 @@ function AppRoutes() {
           }
         />
 
-        {/* Attendance: Super Admin, School Admin, Teacher */}
         <Route
           path="/attendance"
           element={
@@ -216,7 +239,6 @@ function AppRoutes() {
           }
         />
 
-        {/* Examinations & Marks: Super Admin, School Admin, Teacher */}
         <Route
           path="/examinations"
           element={
@@ -226,7 +248,6 @@ function AppRoutes() {
           }
         />
 
-        {/* Fee Management: Restricted to Super Admin, School Admin, Accountant. Teachers blocked! */}
         <Route
           path="/fees"
           element={
@@ -236,7 +257,6 @@ function AppRoutes() {
           }
         />
 
-        {/* Timetable: Super Admin, School Admin, Teacher */}
         <Route
           path="/timetable"
           element={
@@ -246,7 +266,6 @@ function AppRoutes() {
           }
         />
 
-        {/* Notices: All staff roles */}
         <Route
           path="/notices"
           element={
@@ -256,7 +275,6 @@ function AppRoutes() {
           }
         />
 
-        {/* Study Materials & Tests: Super Admin, School Admin, Teacher */}
         <Route
           path="/materials"
           element={
@@ -274,7 +292,6 @@ function AppRoutes() {
           }
         />
 
-        {/* Diary & Homework: Super Admin, School Admin, Teacher */}
         <Route
           path="/diary"
           element={
@@ -284,7 +301,6 @@ function AppRoutes() {
           }
         />
 
-        {/* Calendar: All staff roles */}
         <Route
           path="/calendar"
           element={
@@ -294,7 +310,6 @@ function AppRoutes() {
           }
         />
 
-        {/* Feedback: Super Admin & School Admin */}
         <Route
           path="/feedback"
           element={
@@ -304,7 +319,6 @@ function AppRoutes() {
           }
         />
 
-        {/* Notifications: All staff */}
         <Route
           path="/notifications"
           element={
@@ -314,7 +328,6 @@ function AppRoutes() {
           }
         />
 
-        {/* Settings: Super Admin & School Admin only */}
         <Route
           path="/settings"
           element={
@@ -325,7 +338,7 @@ function AppRoutes() {
         />
       </Route>
 
-      <Route path="*" element={<RoleDefaultRedirect />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

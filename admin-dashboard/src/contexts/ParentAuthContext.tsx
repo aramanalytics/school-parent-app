@@ -217,6 +217,7 @@ export function ParentAuthProvider({ children }: { children: React.ReactNode }) 
     setParent(null);
     setLinkedStudents([]);
     setActiveStudent(null);
+    window.location.href = '/';
   };
 
   return (

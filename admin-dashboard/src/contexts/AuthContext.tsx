@@ -250,6 +250,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     setSession(null);
     setUserRole(null);
+    window.location.href = '/';
   };
 
   const switchDemoRole = (role: RoleType) => {
