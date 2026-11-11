@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth, getRoleDashboardPath } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { GraduationCap, Eye, EyeOff, ShieldCheck, CheckCircle2, UserCheck, ArrowRight } from 'lucide-react';
@@ -37,16 +37,20 @@ export function LoginPage() {
 
   const onSubmit = async (data: LoginForm) => {
     setError(null);
-    const { error } = await signIn(data.email, data.password);
+    const { error, role } = await signIn(data.email, data.password);
     if (error) {
       setError(error.message);
     } else {
-      navigate('/');
+      const targetRole = role || 'school_admin';
+      navigate(getRoleDashboardPath(targetRole));
     }
   };
 
-  const handleQuickFill = (role: 'admin' | 'teacher' | 'accountant') => {
-    if (role === 'admin') {
+  const handleQuickFill = (role: 'super_admin' | 'admin' | 'teacher' | 'accountant') => {
+    if (role === 'super_admin') {
+      setValue('email', 'superadmin@sunriseschool.edu.in');
+      setValue('password', 'password123');
+    } else if (role === 'admin') {
       setValue('email', 'admin@sunriseschool.edu.in');
       setValue('password', 'password123');
     } else if (role === 'teacher') {
@@ -127,15 +131,22 @@ export function LoginPage() {
           {/* Quick Demo Credentials Fill */}
           <div className="mt-6 pt-5 border-t border-[#F1F5F9]">
             <p className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider mb-2.5">
-              Quick Test Credentials:
+              Quick Test Credentials by Role:
             </p>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button
+                type="button"
+                onClick={() => handleQuickFill('super_admin')}
+                className="px-2 py-1.5 rounded-lg border border-[#3B5BDB]/40 bg-[#3B5BDB]/5 hover:bg-[#3B5BDB]/15 text-[11px] font-semibold text-[#3B5BDB] text-center cursor-pointer transition-colors"
+              >
+                Super Admin
+              </button>
               <button
                 type="button"
                 onClick={() => handleQuickFill('admin')}
                 className="px-2 py-1.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] hover:bg-[#EEF2F6] text-[11px] font-medium text-[#172033] text-center cursor-pointer transition-colors"
               >
-                Admin
+                School Admin
               </button>
               <button
                 type="button"

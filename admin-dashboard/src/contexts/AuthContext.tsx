@@ -9,6 +9,7 @@ export interface UserRoleInfo {
   school_id: string;
   full_name: string;
   email: string;
+  teacher_id?: string;
 }
 
 interface AuthContextType {
@@ -16,16 +17,60 @@ interface AuthContextType {
   session: Session | null;
   userRole: UserRoleInfo | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null; role?: RoleType }>;
   signOut: () => Promise<void>;
   switchDemoRole: (role: RoleType) => void;
+  getRoleDashboardPath: (role: RoleType) => string;
 }
 
-const defaultAdminRole: UserRoleInfo = {
+export const getRoleDashboardPath = (role: RoleType): string => {
+  switch (role) {
+    case 'super_admin':
+      return '/super-admin/dashboard';
+    case 'school_admin':
+      return '/admin/dashboard';
+    case 'teacher':
+      return '/teacher/dashboard';
+    case 'accountant':
+      return '/accountant/dashboard';
+    default:
+      return '/admin/dashboard';
+  }
+};
+
+const defaultSchoolAdminRole: UserRoleInfo = {
   role: 'school_admin',
   school_id: '11111111-1111-1111-1111-111111111111',
   full_name: 'Dr. K. Sundararajan (Principal)',
   email: 'admin@sunriseschool.edu.in',
+};
+
+const roleProfiles: Record<RoleType, UserRoleInfo> = {
+  super_admin: {
+    role: 'super_admin',
+    school_id: '11111111-1111-1111-1111-111111111111',
+    full_name: 'Chief Admin (System Director)',
+    email: 'superadmin@sunriseschool.edu.in',
+  },
+  school_admin: {
+    role: 'school_admin',
+    school_id: '11111111-1111-1111-1111-111111111111',
+    full_name: 'Dr. K. Sundararajan (Principal)',
+    email: 'admin@sunriseschool.edu.in',
+  },
+  teacher: {
+    role: 'teacher',
+    school_id: '11111111-1111-1111-1111-111111111111',
+    full_name: 'M. Saravanan (Senior Teacher)',
+    email: 'saravanan.m@sunriseschool.edu.in',
+    teacher_id: 'bbbbbbbb-1111-bbbb-bbbb-bbbbbbbb0001',
+  },
+  accountant: {
+    role: 'accountant',
+    school_id: '11111111-1111-1111-1111-111111111111',
+    full_name: 'R. Venkat (Senior Accountant)',
+    email: 'accountant@sunriseschool.edu.in',
+  },
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -55,21 +100,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const storedRole = localStorage.getItem('demo_role') as RoleType | null;
         const storedAuth = localStorage.getItem('demo_auth');
         if (storedAuth === 'true') {
-          const role = storedRole || 'school_admin';
+          const role: RoleType = storedRole || 'school_admin';
+          const info = roleProfiles[role] || roleProfiles.school_admin;
           setUser({
             id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-            email: role === 'teacher' ? 'saravanan.m@sunriseschool.edu.in' : 'admin@sunriseschool.edu.in',
+            email: info.email,
             app_metadata: {},
             user_metadata: {},
             aud: 'authenticated',
             created_at: new Date().toISOString(),
           } as User);
-          setUserRole({
-            role,
-            school_id: '11111111-1111-1111-1111-111111111111',
-            full_name: role === 'teacher' ? 'M. Saravanan (Senior Teacher)' : 'Dr. K. Sundararajan (Principal)',
-            email: role === 'teacher' ? 'saravanan.m@sunriseschool.edu.in' : 'admin@sunriseschool.edu.in',
-          });
+          setUserRole(info);
         }
       }
       setLoading(false);
@@ -94,47 +135,92 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const loadRole = async (userId: string, email: string) => {
+  const loadRole = async (userId: string, email: string): Promise<RoleType> => {
     try {
+      // 1. Fetch role from user_roles
       const { data, error } = await supabase
         .from('user_roles')
         .select('role, school_id')
         .eq('profile_id', userId)
         .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(1)
         .single();
 
-      if (data && !error) {
-        setUserRole({
-          role: data.role as RoleType,
-          school_id: data.school_id,
-          full_name: email.split('@')[0],
-          email,
-        });
+      let detectedRole: RoleType = 'school_admin';
+      let schoolId = '11111111-1111-1111-1111-111111111111';
+
+      if (data && !error && data.role) {
+        detectedRole = data.role as RoleType;
+        schoolId = data.school_id || schoolId;
       } else {
-        // Fallback to school admin
-        setUserRole({
-          role: 'school_admin',
-          school_id: '11111111-1111-1111-1111-111111111111',
-          full_name: email,
-          email,
-        });
+        // Fallback check: check email heuristics if user_roles record not yet created
+        if (email.includes('superadmin')) detectedRole = 'super_admin';
+        else if (email.includes('teacher') || email.includes('saravanan')) detectedRole = 'teacher';
+        else if (email.includes('accountant') || email.includes('accounts')) detectedRole = 'accountant';
+        else detectedRole = 'school_admin';
       }
+
+      // 2. Fetch full profile name
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', userId)
+        .single();
+
+      // 3. If teacher, get teacher record id
+      let teacherId: string | undefined;
+      if (detectedRole === 'teacher') {
+        const { data: teacherData } = await supabase
+          .from('teachers')
+          .select('id')
+          .eq('profile_id', userId)
+          .single();
+        teacherId = teacherData?.id;
+      }
+
+      const roleInfo: UserRoleInfo = {
+        role: detectedRole,
+        school_id: schoolId,
+        full_name: profileData?.full_name || email.split('@')[0],
+        email,
+        teacher_id: teacherId,
+      };
+
+      setUserRole(roleInfo);
+      return detectedRole;
     } catch {
-      setUserRole(defaultAdminRole);
+      setUserRole(defaultSchoolAdminRole);
+      return 'school_admin';
     }
   };
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string): Promise<{ error: Error | null; role?: RoleType }> => {
     if (isSupabaseConfigured) {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      return { error: error as Error | null };
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        return { error: error as Error };
+      }
+      if (data.user) {
+        const role = await loadRole(data.user.id, data.user.email ?? email);
+        return { error: null, role };
+      }
+      return { error: null, role: 'school_admin' };
     } else {
-      // Demo authentication: allow test logins
+      // Demo authentication: determine role from email
       if (password.length >= 6) {
-        const isTeacher = email.includes('teacher') || email.includes('saravanan');
-        const isAccountant = email.includes('accountant');
-        const role: RoleType = isTeacher ? 'teacher' : isAccountant ? 'accountant' : 'school_admin';
+        let role: RoleType = 'school_admin';
+        if (email.includes('superadmin')) {
+          role = 'super_admin';
+        } else if (email.includes('teacher') || email.includes('saravanan')) {
+          role = 'teacher';
+        } else if (email.includes('accountant')) {
+          role = 'accountant';
+        } else {
+          role = 'school_admin';
+        }
 
+        const info = roleProfiles[role];
         localStorage.setItem('demo_auth', 'true');
         localStorage.setItem('demo_role', role);
 
@@ -147,14 +233,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           created_at: new Date().toISOString(),
         } as User);
 
-        setUserRole({
-          role,
-          school_id: '11111111-1111-1111-1111-111111111111',
-          full_name: isTeacher ? 'M. Saravanan (Senior Teacher)' : 'Dr. K. Sundararajan (Principal)',
-          email,
-        });
-
-        return { error: null };
+        setUserRole(info);
+        return { error: null, role };
       } else {
         return { error: new Error('Password must be at least 6 characters') };
       }
@@ -174,16 +254,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const switchDemoRole = (role: RoleType) => {
     localStorage.setItem('demo_role', role);
-    setUserRole({
-      role,
-      school_id: '11111111-1111-1111-1111-111111111111',
-      full_name: role === 'teacher' ? 'M. Saravanan (Teacher)' : role === 'accountant' ? 'R. Venkat (Accountant)' : 'Dr. K. Sundararajan (Principal)',
-      email: `${role}@sunriseschool.edu.in`,
-    });
+    const info = roleProfiles[role] || roleProfiles.school_admin;
+    setUserRole(info);
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, userRole, loading, signIn, signOut, switchDemoRole }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        session,
+        userRole,
+        loading,
+        signIn,
+        signOut,
+        switchDemoRole,
+        getRoleDashboardPath,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -196,4 +283,5 @@ export function useAuth() {
   }
   return context;
 }
+
 

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Search, Bell, LogOut, User, ChevronDown, Check } from 'lucide-react';
-import { useAuth, RoleType } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { useAuth, RoleType, getRoleDashboardPath } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/Badge';
 
 export function Header() {
+  const navigate = useNavigate();
   const { user, userRole, signOut, switchDemoRole } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showRoleMenu, setShowRoleMenu] = useState(false);
@@ -16,9 +18,10 @@ export function Header() {
   };
 
   const availableRoles: { role: RoleType; label: string }[] = [
-    { role: 'school_admin', label: 'School Admin (Full Access)' },
+    { role: 'super_admin', label: 'Super Admin (System Governance)' },
+    { role: 'school_admin', label: 'School Admin (Daily Operations)' },
     { role: 'teacher', label: 'Teacher (Classroom & Marks)' },
-    { role: 'accountant', label: 'Accountant (Fees & Receipts)' },
+    { role: 'accountant', label: 'Accountant (Fees & Finance)' },
   ];
 
   return (
@@ -60,6 +63,7 @@ export function Header() {
                   onClick={() => {
                     switchDemoRole(r.role);
                     setShowRoleMenu(false);
+                    navigate(getRoleDashboardPath(r.role));
                   }}
                   className="w-full flex items-center justify-between px-3 py-2 text-xs text-left text-[#172033] hover:bg-[#F5F7FB] transition-colors cursor-pointer"
                 >

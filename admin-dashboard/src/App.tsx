@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { AuthProvider, useAuth, RoleType, getRoleDashboardPath } from '@/contexts/AuthContext';
 import { ParentAuthProvider, useParentAuth } from '@/contexts/ParentAuthContext';
 import { ToastProvider } from '@/components/ui/Toast';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -9,6 +9,10 @@ import { LoginPage } from '@/pages/auth/LoginPage';
 import { ParentLoginPage } from '@/pages/auth/ParentLoginPage';
 import { ParentDashboardPage } from '@/pages/parent/ParentDashboardPage';
 import { DashboardPage } from '@/pages/dashboard/DashboardPage';
+import { SuperAdminDashboardPage } from '@/pages/dashboard/SuperAdminDashboardPage';
+import { SchoolAdminDashboardPage } from '@/pages/dashboard/SchoolAdminDashboardPage';
+import { TeacherDashboardPage } from '@/pages/dashboard/TeacherDashboardPage';
+import { AccountantDashboardPage } from '@/pages/dashboard/AccountantDashboardPage';
 import { StudentsPage } from '@/pages/students/StudentsPage';
 import { ParentsPage } from '@/pages/parents/ParentsPage';
 import { TeachersPage } from '@/pages/teachers/TeachersPage';
@@ -34,8 +38,14 @@ const queryClient = new QueryClient({
   },
 });
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+function ProtectedRoute({
+  children,
+  allowedRoles,
+}: {
+  children: React.ReactNode;
+  allowedRoles?: RoleType[];
+}) {
+  const { user, userRole, loading } = useAuth();
 
   if (loading) {
     return (
@@ -47,6 +57,11 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (allowedRoles && userRole && !allowedRoles.includes(userRole.role)) {
+    // Redirect to the user's authorized role dashboard
+    return <Navigate to={getRoleDashboardPath(userRole.role)} replace />;
   }
 
   return <>{children}</>;
@@ -70,8 +85,15 @@ function ProtectedParentRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function RoleDefaultRedirect() {
+  const { userRole, loading } = useAuth();
+  if (loading) return null;
+  const target = userRole ? getRoleDashboardPath(userRole.role) : '/login';
+  return <Navigate to={target} replace />;
+}
+
 function AppRoutes() {
-  const { user, loading } = useAuth();
+  const { user, userRole, loading } = useAuth();
 
   if (loading) {
     return (
@@ -84,7 +106,16 @@ function AppRoutes() {
   return (
     <Routes>
       {/* Staff Login */}
-      <Route path="/login" element={user ? <Navigate to="/" replace /> : <LoginPage />} />
+      <Route
+        path="/login"
+        element={
+          user && userRole ? (
+            <Navigate to={getRoleDashboardPath(userRole.role)} replace />
+          ) : (
+            <LoginPage />
+          )
+        }
+      />
 
       {/* Parent Portal Routes */}
       <Route path="/parent/login" element={<ParentLoginPage />} />
@@ -105,25 +136,196 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       >
-        <Route path="/" element={<DashboardPage />} />
-        <Route path="/students" element={<StudentsPage />} />
-        <Route path="/parents" element={<ParentsPage />} />
-        <Route path="/teachers" element={<TeachersPage />} />
-        <Route path="/attendance" element={<AttendancePage />} />
-        <Route path="/examinations" element={<ExaminationsPage />} />
-        <Route path="/fees" element={<FeesPage />} />
-        <Route path="/timetable" element={<TimetablePage />} />
-        <Route path="/notices" element={<NoticesPage />} />
-        <Route path="/materials" element={<MaterialsPage />} />
-        <Route path="/tests" element={<TestsPage />} />
-        <Route path="/diary" element={<DiaryPage />} />
-        <Route path="/calendar" element={<CalendarPage />} />
-        <Route path="/feedback" element={<FeedbackPage />} />
-        <Route path="/notifications" element={<NotificationsPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
+        {/* Universal default router: routes to appropriate role dashboard */}
+        <Route path="/" element={<RoleDefaultRedirect />} />
+
+        {/* 1. Super Admin Dashboard Route */}
+        <Route
+          path="/super-admin/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin']}>
+              <SuperAdminDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 2. School Admin Dashboard Route */}
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin']}>
+              <SchoolAdminDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 3. Teacher Dashboard Route */}
+        <Route
+          path="/teacher/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'teacher']}>
+              <TeacherDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 4. Accountant Dashboard Route */}
+        <Route
+          path="/accountant/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'accountant']}>
+              <AccountantDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Operational Modules with Role Safeguards */}
+        {/* People Management: Super Admin & School Admin, Teacher sees scoped list */}
+        <Route
+          path="/students"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin', 'teacher']}>
+              <StudentsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/parents"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin']}>
+              <ParentsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teachers"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin']}>
+              <TeachersPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Attendance: Super Admin, School Admin, Teacher */}
+        <Route
+          path="/attendance"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin', 'teacher']}>
+              <AttendancePage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Examinations & Marks: Super Admin, School Admin, Teacher */}
+        <Route
+          path="/examinations"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin', 'teacher']}>
+              <ExaminationsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Fee Management: Restricted to Super Admin, School Admin, Accountant. Teachers blocked! */}
+        <Route
+          path="/fees"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin', 'accountant']}>
+              <FeesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Timetable: Super Admin, School Admin, Teacher */}
+        <Route
+          path="/timetable"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin', 'teacher']}>
+              <TimetablePage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Notices: All staff roles */}
+        <Route
+          path="/notices"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin', 'teacher', 'accountant']}>
+              <NoticesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Study Materials & Tests: Super Admin, School Admin, Teacher */}
+        <Route
+          path="/materials"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin', 'teacher']}>
+              <MaterialsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tests"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin', 'teacher']}>
+              <TestsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Diary & Homework: Super Admin, School Admin, Teacher */}
+        <Route
+          path="/diary"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin', 'teacher']}>
+              <DiaryPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Calendar: All staff roles */}
+        <Route
+          path="/calendar"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin', 'teacher', 'accountant']}>
+              <CalendarPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Feedback: Super Admin & School Admin */}
+        <Route
+          path="/feedback"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin']}>
+              <FeedbackPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Notifications: All staff */}
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin', 'teacher', 'accountant']}>
+              <NotificationsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Settings: Super Admin & School Admin only */}
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin']}>
+              <SettingsPage />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<RoleDefaultRedirect />} />
     </Routes>
   );
 }
