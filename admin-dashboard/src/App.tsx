@@ -28,6 +28,11 @@ import { CalendarPage } from '@/pages/calendar/CalendarPage';
 import { FeedbackPage } from '@/pages/feedback/FeedbackPage';
 import { NotificationsPage } from '@/pages/notifications/NotificationsPage';
 import { SettingsPage } from '@/pages/settings/SettingsPage';
+import { AcademicOverviewDashboardPage } from '@/pages/academic/AcademicOverviewDashboardPage';
+import { AcademicSessionsPage } from '@/pages/academic/AcademicSessionsPage';
+import { ClassesPage } from '@/pages/academic/ClassesPage';
+import { TeacherAssignmentsPage } from '@/pages/academic/TeacherAssignmentsPage';
+import { StudentPromotionsPage } from '@/pages/academic/StudentPromotionsPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -200,6 +205,48 @@ function AppRoutes() {
           element={
             <ProtectedRoute allowedRoles={['super_admin', 'accountant']}>
               <AccountantDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Academic Central Modules */}
+        <Route
+          path="/academic/overview"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin', 'teacher']}>
+              <AcademicOverviewDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/academic/sessions"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin']}>
+              <AcademicSessionsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/academic/classes"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin', 'teacher']}>
+              <ClassesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/academic/teachers"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin']}>
+              <TeacherAssignmentsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/academic/promotions"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin']}>
+              <StudentPromotionsPage />
             </ProtectedRoute>
           }
         />

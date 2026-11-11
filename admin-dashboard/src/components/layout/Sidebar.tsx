@@ -56,11 +56,13 @@ export const superAdminNavItems: NavItem[] = [
   {
     label: 'Academic Setup',
     icon: Layers,
-    href: '/timetable',
+    href: '/academic/overview',
     children: [
-      { label: 'Classes & Sections', href: '/students' },
-      { label: 'Subject Directory', href: '/materials' },
-      { label: 'Academic Years', href: '/calendar' },
+      { label: 'Academic Overview', href: '/academic/overview' },
+      { label: 'Academic Sessions', href: '/academic/sessions' },
+      { label: 'Classes & Sections', href: '/academic/classes' },
+      { label: 'Subjects & Teachers', href: '/academic/teachers' },
+      { label: 'Student Promotions', href: '/academic/promotions' },
     ],
   },
   {
@@ -97,8 +99,12 @@ export const schoolAdminNavItems: NavItem[] = [
   {
     label: 'Academics',
     icon: GraduationCap,
-    href: '/timetable',
+    href: '/academic/overview',
     children: [
+      { label: 'Academic Sessions', href: '/academic/sessions' },
+      { label: 'Classes & Sections', href: '/academic/classes' },
+      { label: 'Subjects & Teachers', href: '/academic/teachers' },
+      { label: 'Student Promotions', href: '/academic/promotions' },
       { label: 'Timetable', href: '/timetable' },
       { label: 'Examinations', href: '/examinations' },
       { label: 'Study Materials', href: '/materials' },

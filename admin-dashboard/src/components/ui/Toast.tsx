@@ -13,6 +13,7 @@ interface ToastItem {
 
 interface ToastContextType {
   toast: (type: ToastType, title: string, message?: string) => void;
+  addToast: (message: string, type?: ToastType) => void;
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
@@ -36,6 +37,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     }, 4000);
   }, []);
 
+  const simpleToast = useCallback((message: string, type: ToastType = 'info') => {
+    addToast(type, message);
+  }, [addToast]);
+
   const removeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
@@ -55,7 +60,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <ToastContext.Provider value={{ toast: addToast }}>
+    <ToastContext.Provider value={{ toast: addToast, addToast: simpleToast }}>
       {children}
       <div className="fixed top-5 right-5 z-[200] space-y-2.5 max-w-sm pointer-events-none">
         {toasts.map((t) => {
