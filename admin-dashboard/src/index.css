@@ -49,3 +49,90 @@
   background: #94A3B8;
 }
 
+/* ==========================================================================
+   Sunrise Landing Page Animations & Keyframes
+   ========================================================================== */
+
+/* Rotating Conic Border */
+@keyframes spinSlow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 8s linear infinite;
+}
+
+/* Continuous Subtle Shimmer Sweep */
+@keyframes shimmerSweep {
+  0% {
+    transform: translateX(-150%);
+  }
+  50%, 100% {
+    transform: translateX(150%);
+  }
+}
+
+.animate-shimmer-sweep {
+  animation: shimmerSweep 4s ease-in-out infinite;
+}
+
+/* Sunrise Breathing Glow */
+@keyframes sunriseBreath {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.04);
+  }
+}
+
+.animate-sunrise-glow {
+  animation: sunriseBreath 6s ease-in-out infinite;
+}
+
+/* Text Shimmer Sweep for Sunrise School */
+@keyframes textShimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-text-shimmer {
+  background-size: 200% auto;
+  animation: textShimmer 4s ease-in-out infinite;
+}
+
+/* Floating Particles Drift */
+@keyframes particleFloat {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-80px) scale(0.6);
+    opacity: 0;
+  }
+}
+
+.animate-particle {
+  animation: particleFloat linear infinite;
+}
