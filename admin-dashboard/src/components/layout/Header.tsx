@@ -97,7 +97,7 @@ export function Header() {
                 {userRole?.full_name || 'Admin User'}
               </p>
               <p className="text-[10px] text-[#64748B] truncate max-w-[140px]">
-                {user?.email || 'admin@sunriseschool.edu.in'}
+                {user?.email || 'admin@avkirs.ac.in'}
               </p>
             </div>
             <ChevronDown size={14} className="text-[#64748B]" />

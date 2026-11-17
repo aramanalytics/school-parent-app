@@ -100,14 +100,24 @@ export function ParentLoginPage() {
       <div className="w-full max-w-md">
         {/* Portal Header */}
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-[#172554] rounded-2xl mb-3 shadow-md">
-            <GraduationCap size={32} className="text-white" />
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-3 shadow-lg">
+            <img
+              src="/avk-logo.svg"
+              alt="AVK Emblem"
+              className="w-full h-full object-contain aspect-square"
+            />
           </div>
-          <h1 className="text-2xl font-bold text-[#172033] tracking-tight">
-            Sunrise School Parent Portal
+          <h1 className="text-xl sm:text-2xl font-black text-[#172554] tracking-tight uppercase leading-tight">
+            AVK INTERNATIONAL RESIDENTIAL SENIOR SECONDARY SCHOOL
           </h1>
-          <p className="text-xs text-[#64748B] mt-1 font-medium">
-            Monitor attendance, exams, fees, diary & circulars for your wards
+          <p className="text-xs text-amber-700 font-bold mt-1">
+            Affiliated to CBSE New-Delhi &bull; Affiliation No: 1930319
+          </p>
+          <p className="text-xs text-[#64748B] mt-1 font-semibold uppercase tracking-wider">
+            Parent Web Portal
+          </p>
+          <p className="text-xs text-[#64748B] mt-0.5">
+            Monitor attendance, exams, fees, diary &amp; circulars for your wards
           </p>
         </div>
 

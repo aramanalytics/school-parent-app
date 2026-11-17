@@ -1,7 +1,7 @@
 import { Variants } from 'framer-motion';
 
 /**
- * Reusable motion animation variants for Sunrise School Web Landing Page
+ * Reusable motion animation variants for AVK School Web Portal
  */
 
 // Stagger container for text and lists

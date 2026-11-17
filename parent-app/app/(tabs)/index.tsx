@@ -30,6 +30,7 @@ import {
   FileText,
   User,
   CheckCircle2,
+  Bus,
 } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
@@ -51,13 +52,13 @@ export default function DashboardScreen() {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <View style={styles.schoolLogoSmall}>
-            <Text style={styles.schoolLogoChar}>S</Text>
+            <Text style={styles.schoolLogoChar}>A</Text>
           </View>
           <View>
             <Text style={styles.greetingText}>
               {t.greeting} {user?.name?.split(' ')[0] || 'Parent'}
             </Text>
-            <Text style={styles.schoolTitle}>Sunrise International School</Text>
+            <Text style={styles.schoolTitle}>AVK Senior Secondary School</Text>
           </View>
         </View>
 
@@ -216,6 +217,16 @@ export default function DashboardScreen() {
               <BookOpen size={20} color="#7E22CE" />
             </View>
             <Text style={styles.quickTitle}>{t.dashboard.learningMaterials}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.quickCard}
+            onPress={() => router.push('/school-bus')}
+          >
+            <View style={[styles.quickIconBox, { backgroundColor: '#FEF3C7' }]}>
+              <Bus size={20} color="#D97706" />
+            </View>
+            <Text style={styles.quickTitle}>{t.more.mySchoolBus || 'My School Bus'}</Text>
           </TouchableOpacity>
         </View>
       </View>

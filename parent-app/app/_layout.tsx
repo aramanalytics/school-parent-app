@@ -27,6 +27,7 @@ export default function RootLayout() {
           <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)/verify-otp" options={{ headerShown: false }} />
           <Stack.Screen name="student-profile" options={{ title: 'Student Profile' }} />
+          <Stack.Screen name="school-bus" options={{ title: 'My School Bus' }} />
           <Stack.Screen name="notices" options={{ title: 'School Circulars' }} />
           <Stack.Screen name="timetable" options={{ title: 'Class Timetable' }} />
           <Stack.Screen name="exam-results" options={{ title: 'Examination Results' }} />

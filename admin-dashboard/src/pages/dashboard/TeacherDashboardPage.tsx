@@ -100,7 +100,7 @@ export function TeacherDashboardPage() {
               Welcome back, {userRole?.full_name || 'M. Saravanan (Teacher)'}
             </h1>
             <p className="text-xs text-white/80 mt-1">
-              Class Teacher: Class 5 Section A • Subjects: Mathematics & Science • Sunrise Matriculation
+              Class Teacher: Class 5 Section A • Subjects: Mathematics & Science • AVK Senior Secondary
             </p>
           </div>
 

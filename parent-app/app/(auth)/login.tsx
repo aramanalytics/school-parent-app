@@ -51,9 +51,10 @@ export default function LoginScreen() {
         {/* Brand Banner */}
         <View style={styles.headerBox}>
           <View style={styles.logoBadge}>
-            <Text style={styles.logoText}>S</Text>
+            <Text style={styles.logoText}>A</Text>
           </View>
-          <Text style={styles.schoolName}>Sunrise International School</Text>
+          <Text style={styles.schoolName}>AVK International Residential Senior Secondary School</Text>
+          <Text style={styles.subtitle}>Affiliated to CBSE New-Delhi | Affiliation No: 1930319</Text>
           <Text style={styles.subtitle}>Parent Portal & Academic Monitoring</Text>
         </View>
 

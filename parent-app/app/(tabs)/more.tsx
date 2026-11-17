@@ -22,6 +22,7 @@ import {
   LogOut,
   ChevronRight,
   Megaphone,
+  Bus,
 } from 'lucide-react-native';
 
 export default function MoreScreen() {
@@ -35,6 +36,13 @@ export default function MoreScreen() {
       route: '/student-profile',
       color: '#3B5BDB',
       bg: '#DBE4FF',
+    },
+    {
+      label: t.more.mySchoolBus || 'My School Bus',
+      icon: Bus,
+      route: '/school-bus',
+      color: '#D97706',
+      bg: '#FEF3C7',
     },
     {
       label: 'School Circulars & Notices',
@@ -153,7 +161,7 @@ export default function MoreScreen() {
       </TouchableOpacity>
 
       <Text style={styles.versionFooter}>
-        Sunrise School Parent Portal • Version 1.0.0
+        AVK School Parent Portal • Version 1.0.0
       </Text>
     </ScrollView>
   );

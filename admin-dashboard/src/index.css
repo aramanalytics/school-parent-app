@@ -50,7 +50,7 @@
 }
 
 /* ==========================================================================
-   Sunrise Landing Page Animations & Keyframes
+   AVK School Portal Animations & Keyframes
    ========================================================================== */
 
 /* Rotating Conic Border */
@@ -81,7 +81,7 @@
   animation: shimmerSweep 4s ease-in-out infinite;
 }
 
-/* Sunrise Breathing Glow */
+/* Ambient Breathing Glow */
 @keyframes sunriseBreath {
   0%, 100% {
     opacity: 0.35;
@@ -97,7 +97,7 @@
   animation: sunriseBreath 6s ease-in-out infinite;
 }
 
-/* Text Shimmer Sweep for Sunrise School */
+/* Text Shimmer Sweep for AVK School Portal */
 @keyframes textShimmer {
   0% {
     background-position: 0% 50%;

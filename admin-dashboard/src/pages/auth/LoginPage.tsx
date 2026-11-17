@@ -78,14 +78,21 @@ export function LoginPage() {
       <div className="relative z-10 w-full max-w-md my-auto">
         {/* Brand Banner */}
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-[#172554] rounded-2xl mb-3 shadow-xl ring-4 ring-white/20">
-            <GraduationCap size={32} className="text-white" />
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-3 shadow-2xl drop-shadow-lg p-1 bg-white/10 backdrop-blur-sm ring-2 ring-white/40">
+            <img
+              src="/avk-logo.svg"
+              alt="AVK Emblem"
+              className="w-full h-full object-contain aspect-square"
+            />
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight drop-shadow-md">
-            Sunrise School Management
+          <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight drop-shadow-md uppercase leading-tight">
+            AVK INTERNATIONAL RESIDENTIAL SENIOR SECONDARY SCHOOL
           </h1>
+          <p className="text-xs text-amber-300 font-bold mt-1 drop-shadow-sm">
+            Affiliated to CBSE New-Delhi &bull; Affiliation No: 1930319
+          </p>
           <p className="text-xs text-white/90 mt-1 font-medium drop-shadow-sm">
-            Admin & Teacher Web Portal
+            Admin &amp; Teacher Web Portal
           </p>
         </div>
 
@@ -101,7 +108,7 @@ export function LoginPage() {
             <Input
               label="Official Email Address"
               type="email"
-              placeholder="admin@sunriseschool.edu.in"
+              placeholder="admin@avkirs.ac.in"
               error={errors.email?.message}
               {...register('email')}
             />

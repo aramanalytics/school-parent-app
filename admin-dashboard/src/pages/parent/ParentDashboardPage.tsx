@@ -29,15 +29,41 @@ import {
   X,
   Phone,
   Home,
+  Bus,
+  Radio,
+  Navigation,
+  Shirt,
+  Printer,
+  Download,
+  Eye,
+  AlertTriangle,
+  Info,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Modal } from '@/components/ui/Modal';
+import { getStudentBusAssignment } from '@/lib/transportData';
+import {
+  getStudentBookUniformFees,
+  StudentBookUniformFee,
+  FeePaymentRecord,
+} from '@/lib/bookUniformFeeData';
 
 export function ParentDashboardPage() {
   const navigate = useNavigate();
   const { parent, linkedStudents, activeStudent, setActiveStudent, signOut } = useParentAuth();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'attendance' | 'diary' | 'fees' | 'exams' | 'timetable' | 'notices'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'attendance' | 'diary' | 'fees' | 'exams' | 'timetable' | 'bus' | 'notices'>('overview');
+  const [feeSubTab, setFeeSubTab] = useState<'tuition' | 'books_uniform'>('tuition');
+  const [parentReceiptModal, setParentReceiptModal] = useState<{
+    fee: StudentBookUniformFee;
+    payment: FeePaymentRecord;
+  } | null>(null);
+
+  // Bus assignment for active child
+  const busData = getStudentBusAssignment(activeStudent?.id);
+  // Book & Uniform fees for active child
+  const bookUniformData = getStudentBookUniformFees(activeStudent?.id);
   const [showChildPicker, setShowChildPicker] = useState(false);
 
   // Filter dynamic datasets for the active ward
@@ -78,13 +104,19 @@ export function ParentDashboardPage() {
       <header className="bg-[#172554] text-white sticky top-0 z-40 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#3B5BDB] flex items-center justify-center font-bold text-base shadow-sm">
-              S
+            <div className="w-9 h-9 rounded-full shrink-0 flex items-center justify-center">
+              <img
+                src="/avk-logo.svg"
+                alt="AVK Emblem"
+                className="w-full h-full object-contain aspect-square"
+              />
             </div>
             <div>
-              <p className="font-bold text-sm tracking-tight leading-tight">Sunrise International School</p>
-              <p className="text-[10px] text-white/60 tracking-wider uppercase font-semibold">
-                Parent Web Portal
+              <p className="font-black text-xs sm:text-sm tracking-tight leading-tight uppercase" title="AVK INTERNATIONAL RESIDENTIAL SENIOR SECONDARY SCHOOL">
+                AVK Senior Secondary School
+              </p>
+              <p className="text-[10px] text-amber-300 font-semibold tracking-wide">
+                Affiliated to CBSE New-Delhi &bull; 1930319
               </p>
             </div>
           </div>
@@ -172,6 +204,7 @@ export function ParentDashboardPage() {
             { id: 'fees', label: 'Fees & Invoices', icon: CreditCard },
             { id: 'exams', label: 'Examinations', icon: Award },
             { id: 'timetable', label: 'Timetable', icon: Clock },
+            { id: 'bus', label: 'My School Bus', icon: Bus },
             { id: 'notices', label: 'Circulars', icon: Megaphone },
           ].map((tab) => {
             const Icon = tab.icon;
@@ -327,6 +360,81 @@ export function ParentDashboardPage() {
                 </div>
               </div>
             </div>
+
+            {/* School Bus Information Card */}
+            <div className="bg-white rounded-xl border border-[#E2E8F0] p-5 shadow-xs">
+              <div className="flex items-center justify-between pb-3 border-b border-[#F1F5F9] mb-4">
+                <h3 className="text-sm font-bold text-[#172033] flex items-center gap-2">
+                  <Bus size={16} className="text-[#3B5BDB]" />
+                  School Bus Information
+                </h3>
+                <Link
+                  to="/parent/bus"
+                  className="text-xs font-bold text-[#3B5BDB] hover:underline"
+                >
+                  View Details →
+                </Link>
+              </div>
+
+              {busData.bus && busData.assignment ? (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="p-3 bg-[#F8FAFC] rounded-lg border border-[#E2E8F0]">
+                      <p className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider">Bus Number</p>
+                      <p className="text-sm font-bold text-[#172033] mt-0.5">{busData.bus.busNumber}</p>
+                    </div>
+                    <div className="p-3 bg-[#F8FAFC] rounded-lg border border-[#E2E8F0]">
+                      <p className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider">Route</p>
+                      <p className="text-sm font-bold text-[#172033] mt-0.5">{busData.route?.name || busData.bus.routeName}</p>
+                    </div>
+                    <div className="p-3 bg-[#F8FAFC] rounded-lg border border-[#E2E8F0]">
+                      <p className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider">Driver Contact</p>
+                      <p className="text-sm font-bold text-[#172033] mt-0.5">{busData.driver?.phone || '—'}</p>
+                    </div>
+                    <div className="p-3 bg-[#F8FAFC] rounded-lg border border-[#E2E8F0]">
+                      <p className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider">Pickup Time</p>
+                      <p className="text-sm font-bold text-[#172033] mt-0.5">{busData.assignment.pickupTime}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    <Link
+                      to="/parent/bus"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#3B5BDB] text-white text-xs font-bold rounded-lg shadow-sm hover:bg-[#2B4BC9] transition-colors"
+                    >
+                      <Bus size={14} />
+                      View Bus Details
+                    </Link>
+                    <Link
+                      to="/parent/bus/tracking"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white text-[#3B5BDB] text-xs font-bold rounded-lg border border-[#3B5BDB] hover:bg-[#EDF2FF] transition-colors"
+                    >
+                      <Radio size={14} />
+                      Track Bus
+                    </Link>
+                    <Link
+                      to="/parent/bus/route"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white text-[#64748B] text-xs font-bold rounded-lg border border-[#E2E8F0] hover:bg-[#F8FAFC] transition-colors"
+                    >
+                      <Navigation size={14} />
+                      View Route
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <div className="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+                    <Bus size={24} />
+                  </div>
+                  <p className="text-sm font-semibold text-[#B45309]">
+                    No school bus has been assigned to this student yet.
+                  </p>
+                  <p className="text-xs text-[#64748B] mt-1">
+                    Contact the AVK Transport Coordinator for bus allocation.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -386,40 +494,439 @@ export function ParentDashboardPage() {
 
         {/* Fees Tab */}
         {activeTab === 'fees' && (
-          <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 shadow-xs space-y-4">
-            <div className="flex items-center justify-between pb-4 border-b border-[#F1F5F9]">
-              <div>
-                <h3 className="text-base font-bold text-[#172033]">Fee Assessment & Invoices</h3>
-                <p className="text-xs text-[#64748B]">Assessed fees and receipts for {activeStudent.first_name}</p>
-              </div>
-              <div className="text-right">
-                <span className="text-xs text-[#64748B]">Outstanding:</span>{' '}
-                <span className="text-sm font-bold text-[#E03131]">{formatCurrency(totalPending)}</span>
-              </div>
+          <div className="space-y-4">
+            {/* Sub-navigation Switcher between Tuition Fees and Books & Uniform Fees */}
+            <div className="flex items-center gap-2 p-1 bg-white rounded-xl border border-[#E2E8F0] shadow-2xs">
+              <button
+                onClick={() => setFeeSubTab('tuition')}
+                className={`flex-1 py-2 px-4 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                  feeSubTab === 'tuition'
+                    ? 'bg-[#172554] text-white shadow-xs'
+                    : 'text-[#64748B] hover:text-[#172033] hover:bg-[#F8FAFC]'
+                }`}
+              >
+                <CreditCard size={14} />
+                <span>Tuition & Academic Invoices</span>
+              </button>
+              <button
+                onClick={() => setFeeSubTab('books_uniform')}
+                className={`flex-1 py-2 px-4 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                  feeSubTab === 'books_uniform'
+                    ? 'bg-[#172554] text-white shadow-xs'
+                    : 'text-[#64748B] hover:text-[#172033] hover:bg-[#F8FAFC]'
+                }`}
+              >
+                <BookOpen size={14} />
+                <span>Books & Uniform Fees</span>
+                {bookUniformData.totalPending > 0 && (
+                  <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-[#E03131] text-white font-extrabold">
+                    Due
+                  </span>
+                )}
+              </button>
             </div>
 
-            <div className="space-y-3">
-              {studentFees.map((fee) => (
-                <div key={fee.id} className="p-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            {/* Sub-view A: Tuition Fees */}
+            {feeSubTab === 'tuition' && (
+              <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 shadow-xs space-y-4">
+                <div className="flex items-center justify-between pb-4 border-b border-[#F1F5F9]">
                   <div>
-                    <div className="flex items-center gap-2">
-                      <p className="font-bold text-sm text-[#172033]">{fee.category}</p>
-                      <Badge variant={fee.status === 'paid' ? 'success' : fee.status === 'partial' ? 'warning' : 'error'}>
-                        {fee.status.toUpperCase()}
-                      </Badge>
-                    </div>
-                    <p className="text-[#64748B] mt-1">Due Date: {fee.due_date}</p>
-                    {fee.receipt_number && (
-                      <p className="text-[#3B5BDB] font-mono mt-0.5">Receipt: {fee.receipt_number} ({fee.payment_method})</p>
-                    )}
+                    <h3 className="text-base font-bold text-[#172033]">Fee Assessment & Invoices</h3>
+                    <p className="text-xs text-[#64748B]">Assessed term tuition fees and receipts for {activeStudent.first_name}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-[#64748B]">Assessed Amount: <span className="font-bold text-[#172033]">{formatCurrency(fee.amount)}</span></p>
-                    <p className="text-xs text-[#16A36A]">Paid: <span className="font-bold">{formatCurrency(fee.paid_amount)}</span></p>
+                    <span className="text-xs text-[#64748B]">Outstanding:</span>{' '}
+                    <span className="text-sm font-bold text-[#E03131]">{formatCurrency(totalPending)}</span>
                   </div>
                 </div>
-              ))}
-            </div>
+
+                <div className="space-y-3">
+                  {studentFees.map((fee) => (
+                    <div key={fee.id} className="p-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <p className="font-bold text-sm text-[#172033]">{fee.category}</p>
+                          <Badge variant={fee.status === 'paid' ? 'success' : fee.status === 'partial' ? 'warning' : 'error'}>
+                            {fee.status.toUpperCase()}
+                          </Badge>
+                        </div>
+                        <p className="text-[#64748B] mt-1">Due Date: {fee.due_date}</p>
+                        {fee.receipt_number && (
+                          <p className="text-[#3B5BDB] font-mono mt-0.5">Receipt: {fee.receipt_number} ({fee.payment_method})</p>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-[#64748B]">Assessed Amount: <span className="font-bold text-[#172033]">{formatCurrency(fee.amount)}</span></p>
+                        <p className="text-xs text-[#16A36A]">Paid: <span className="font-bold">{formatCurrency(fee.paid_amount)}</span></p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Sub-view B: Books & Uniform Fees */}
+            {feeSubTab === 'books_uniform' && (
+              <div className="space-y-5">
+                {/* Parent Notifications Banner */}
+                <div className="bg-[#EFF6FF] border border-[#BFDBFE] rounded-xl p-3.5 flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#DBE4FF] text-[#1D4ED8] flex items-center justify-center shrink-0 mt-0.5">
+                    <Bell size={16} />
+                  </div>
+                  <div className="text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-[#1E40AF]">Books & Uniform Notification</span>
+                      <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-[#DBE4FF] text-[#1E40AF]">
+                        AY 2026-2027
+                      </span>
+                    </div>
+                    <p className="text-[#1E3A8A] mt-0.5 leading-relaxed">
+                      Prescribed textbooks, activity notebooks, sports uniforms, and accessories for{' '}
+                      <strong>{activeStudent.first_name} {activeStudent.last_name} ({activeStudent.class_name} • {activeStudent.section_name})</strong>{' '}
+                      can be collected from the AVK School Store upon clearing due invoices.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Combined Summary Bar */}
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                  <div className="bg-white p-3.5 rounded-xl border border-[#E2E8F0] shadow-2xs">
+                    <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">Book Fee</p>
+                    <p className="text-base font-bold text-[#0369A1] mt-0.5">
+                      {formatCurrency(bookUniformData.bookFee?.totalAmount || 0)}
+                    </p>
+                    <p className="text-[10px] text-[#64748B]">
+                      {bookUniformData.bookFee ? (bookUniformData.bookFee.balanceAmount === 0 ? '✓ Cleared' : `Bal: ${formatCurrency(bookUniformData.bookFee.balanceAmount)}`) : 'Not Assigned'}
+                    </p>
+                  </div>
+
+                  <div className="bg-white p-3.5 rounded-xl border border-[#E2E8F0] shadow-2xs">
+                    <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">Uniform Fee</p>
+                    <p className="text-base font-bold text-[#7E22CE] mt-0.5">
+                      {formatCurrency(bookUniformData.uniformFee?.totalAmount || 0)}
+                    </p>
+                    <p className="text-[10px] text-[#64748B]">
+                      {bookUniformData.uniformFee ? (bookUniformData.uniformFee.balanceAmount === 0 ? '✓ Cleared' : `Bal: ${formatCurrency(bookUniformData.uniformFee.balanceAmount)}`) : 'Not Assigned'}
+                    </p>
+                  </div>
+
+                  <div className="bg-white p-3.5 rounded-xl border border-[#E2E8F0] shadow-2xs">
+                    <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">Total Assigned</p>
+                    <p className="text-base font-bold text-[#172033] mt-0.5">
+                      {formatCurrency(bookUniformData.totalAssigned)}
+                    </p>
+                    <p className="text-[10px] text-[#94A3B8]">AY 2026-2027</p>
+                  </div>
+
+                  <div className="bg-white p-3.5 rounded-xl border border-[#E2E8F0] shadow-2xs">
+                    <p className="text-[10px] font-bold text-[#16A36A] uppercase tracking-wider">Total Paid</p>
+                    <p className="text-base font-bold text-[#16A36A] mt-0.5">
+                      {formatCurrency(bookUniformData.totalReceived)}
+                    </p>
+                    <p className="text-[10px] text-[#16A36A]">Verified Collections</p>
+                  </div>
+
+                  <div className="bg-white p-3.5 rounded-xl border border-[#E2E8F0] shadow-2xs col-span-2 sm:col-span-1">
+                    <p className="text-[10px] font-bold text-[#E03131] uppercase tracking-wider">Pending Balance</p>
+                    <p className="text-base font-bold text-[#E03131] mt-0.5">
+                      {formatCurrency(bookUniformData.totalPending)}
+                    </p>
+                    <p className="text-[10px] text-[#E03131]">Outstanding Amount</p>
+                  </div>
+                </div>
+
+                {/* Two Distinct Cards: BOOK FEE and UNIFORM FEE */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  {/* CARD 1: BOOK FEE */}
+                  <div className="bg-white rounded-2xl border border-[#E2E8F0] p-5 shadow-xs flex flex-col justify-between space-y-4">
+                    <div>
+                      {/* Card Header */}
+                      <div className="flex items-center justify-between pb-3 border-b border-[#F1F5F9]">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-9 h-9 rounded-xl bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center">
+                            <BookOpen size={18} />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-[#172033]">Book Fee Details</h4>
+                            <p className="text-[11px] text-[#64748B]">Textbooks, notebooks & study kits</p>
+                          </div>
+                        </div>
+
+                        {bookUniformData.bookFee && (
+                          <div>
+                            {bookUniformData.bookFee.status === 'paid' && (
+                              <Badge variant="success">PAID</Badge>
+                            )}
+                            {bookUniformData.bookFee.status === 'partial' && (
+                              <Badge variant="warning">PARTIALLY PAID</Badge>
+                            )}
+                            {bookUniformData.bookFee.status === 'pending' && (
+                              <Badge variant="default">PENDING</Badge>
+                            )}
+                            {bookUniformData.bookFee.status === 'overdue' && (
+                              <Badge variant="error">OVERDUE</Badge>
+                            )}
+                            {bookUniformData.bookFee.status === 'waived' && (
+                              <Badge variant="purple">WAIVED</Badge>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {bookUniformData.bookFee ? (
+                        <div className="mt-4 space-y-4 text-xs">
+                          {/* Financial KPI Row */}
+                          <div className="grid grid-cols-3 gap-2 bg-[#F8FAFC] p-3 rounded-xl border border-[#E2E8F0] text-center">
+                            <div>
+                              <p className="text-[10px] text-[#64748B]">Total Fee</p>
+                              <p className="font-bold text-[#172033] mt-0.5">
+                                {formatCurrency(bookUniformData.bookFee.totalAmount)}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] text-[#16A36A]">Received</p>
+                              <p className="font-bold text-[#16A36A] mt-0.5">
+                                {formatCurrency(bookUniformData.bookFee.amountReceived)}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] text-[#E03131]">Pending Balance</p>
+                              <p
+                                className={`font-bold mt-0.5 ${
+                                  bookUniformData.bookFee.balanceAmount > 0
+                                    ? 'text-[#E03131]'
+                                    : 'text-[#64748B]'
+                                }`}
+                              >
+                                {formatCurrency(bookUniformData.bookFee.balanceAmount)}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between text-xs px-1">
+                            <span className="text-[#64748B]">Payment Due Date:</span>
+                            <span className="font-bold text-[#172033]">
+                              {bookUniformData.bookFee.dueDate}
+                            </span>
+                          </div>
+
+                          {/* Itemized Breakdown */}
+                          <div>
+                            <p className="font-bold text-[#172033] text-[11px] uppercase tracking-wider mb-2">
+                              Package Items Included:
+                            </p>
+                            <div className="divide-y divide-[#F1F5F9] border border-[#E2E8F0] rounded-xl overflow-hidden bg-[#FAFCFF]">
+                              {bookUniformData.bookFee.items.map((item, i) => (
+                                <div key={i} className="p-2.5 flex items-center justify-between">
+                                  <span className="text-[#172033] font-medium">{item.name}</span>
+                                  <span className="font-mono text-[#64748B]">{formatCurrency(item.amount)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Payment History & Receipts */}
+                          <div>
+                            <p className="font-bold text-[#172033] text-[11px] uppercase tracking-wider mb-2">
+                              Payment History & Receipts:
+                            </p>
+                            {bookUniformData.bookFee.payments.length > 0 ? (
+                              <div className="space-y-2">
+                                {bookUniformData.bookFee.payments.map((pay) => (
+                                  <div
+                                    key={pay.id}
+                                    className="p-3 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] flex items-center justify-between"
+                                  >
+                                    <div>
+                                      <p className="font-mono font-bold text-[#3B5BDB]">
+                                        {pay.receiptNumber}
+                                      </p>
+                                      <p className="text-[10px] text-[#64748B] mt-0.5">
+                                        {pay.paymentDate} &bull; Mode: <strong>{pay.paymentMode}</strong>
+                                      </p>
+                                    </div>
+                                    <div className="text-right">
+                                      <p className="font-bold text-[#16A36A]">{formatCurrency(pay.amount)}</p>
+                                      <button
+                                        onClick={() =>
+                                          setParentReceiptModal({
+                                            fee: bookUniformData.bookFee!,
+                                            payment: pay,
+                                          })
+                                        }
+                                        className="text-[10px] font-bold text-[#3B5BDB] hover:underline mt-0.5 inline-flex items-center gap-1 cursor-pointer"
+                                      >
+                                        <Eye size={10} /> View Receipt
+                                      </button>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <div className="p-3 bg-[#F8FAFC] rounded-xl border border-dashed border-[#E2E8F0] text-center text-[#94A3B8]">
+                                No payment has been processed yet for this fee.
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="py-8 text-center text-[#64748B]">
+                          <BookOpen size={28} className="mx-auto text-[#94A3B8] mb-2 opacity-50" />
+                          <p className="font-semibold text-sm">No Book Fee record assigned</p>
+                          <p className="text-[11px] text-[#94A3B8] mt-1">
+                            Contact AVK Administration if books allocation is required.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* CARD 2: UNIFORM FEE */}
+                  <div className="bg-white rounded-2xl border border-[#E2E8F0] p-5 shadow-xs flex flex-col justify-between space-y-4">
+                    <div>
+                      {/* Card Header */}
+                      <div className="flex items-center justify-between pb-3 border-b border-[#F1F5F9]">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-9 h-9 rounded-xl bg-[#F3E8FF] text-[#7E22CE] flex items-center justify-center">
+                            <Shirt size={18} />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-[#172033]">Uniform Fee Details</h4>
+                            <p className="text-[11px] text-[#64748B]">Regular uniform, sports kit, shoes & belt</p>
+                          </div>
+                        </div>
+
+                        {bookUniformData.uniformFee && (
+                          <div>
+                            {bookUniformData.uniformFee.status === 'paid' && (
+                              <Badge variant="success">PAID</Badge>
+                            )}
+                            {bookUniformData.uniformFee.status === 'partial' && (
+                              <Badge variant="warning">PARTIALLY PAID</Badge>
+                            )}
+                            {bookUniformData.uniformFee.status === 'pending' && (
+                              <Badge variant="default">PENDING</Badge>
+                            )}
+                            {bookUniformData.uniformFee.status === 'overdue' && (
+                              <Badge variant="error">OVERDUE</Badge>
+                            )}
+                            {bookUniformData.uniformFee.status === 'waived' && (
+                              <Badge variant="purple">WAIVED</Badge>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {bookUniformData.uniformFee ? (
+                        <div className="mt-4 space-y-4 text-xs">
+                          {/* Financial KPI Row */}
+                          <div className="grid grid-cols-3 gap-2 bg-[#F8FAFC] p-3 rounded-xl border border-[#E2E8F0] text-center">
+                            <div>
+                              <p className="text-[10px] text-[#64748B]">Total Fee</p>
+                              <p className="font-bold text-[#172033] mt-0.5">
+                                {formatCurrency(bookUniformData.uniformFee.totalAmount)}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] text-[#16A36A]">Received</p>
+                              <p className="font-bold text-[#16A36A] mt-0.5">
+                                {formatCurrency(bookUniformData.uniformFee.amountReceived)}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] text-[#E03131]">Pending Balance</p>
+                              <p
+                                className={`font-bold mt-0.5 ${
+                                  bookUniformData.uniformFee.balanceAmount > 0
+                                    ? 'text-[#E03131]'
+                                    : 'text-[#64748B]'
+                                }`}
+                              >
+                                {formatCurrency(bookUniformData.uniformFee.balanceAmount)}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between text-xs px-1">
+                            <span className="text-[#64748B]">Payment Due Date:</span>
+                            <span className="font-bold text-[#172033]">
+                              {bookUniformData.uniformFee.dueDate}
+                            </span>
+                          </div>
+
+                          {/* Itemized Breakdown */}
+                          <div>
+                            <p className="font-bold text-[#172033] text-[11px] uppercase tracking-wider mb-2">
+                              Package Items Included:
+                            </p>
+                            <div className="divide-y divide-[#F1F5F9] border border-[#E2E8F0] rounded-xl overflow-hidden bg-[#FAFCFF]">
+                              {bookUniformData.uniformFee.items.map((item, i) => (
+                                <div key={i} className="p-2.5 flex items-center justify-between">
+                                  <span className="text-[#172033] font-medium">{item.name}</span>
+                                  <span className="font-mono text-[#64748B]">{formatCurrency(item.amount)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Payment History & Receipts */}
+                          <div>
+                            <p className="font-bold text-[#172033] text-[11px] uppercase tracking-wider mb-2">
+                              Payment History & Receipts:
+                            </p>
+                            {bookUniformData.uniformFee.payments.length > 0 ? (
+                              <div className="space-y-2">
+                                {bookUniformData.uniformFee.payments.map((pay) => (
+                                  <div
+                                    key={pay.id}
+                                    className="p-3 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] flex items-center justify-between"
+                                  >
+                                    <div>
+                                      <p className="font-mono font-bold text-[#3B5BDB]">
+                                        {pay.receiptNumber}
+                                      </p>
+                                      <p className="text-[10px] text-[#64748B] mt-0.5">
+                                        {pay.paymentDate} &bull; Mode: <strong>{pay.paymentMode}</strong>
+                                      </p>
+                                    </div>
+                                    <div className="text-right">
+                                      <p className="font-bold text-[#16A36A]">{formatCurrency(pay.amount)}</p>
+                                      <button
+                                        onClick={() =>
+                                          setParentReceiptModal({
+                                            fee: bookUniformData.uniformFee!,
+                                            payment: pay,
+                                          })
+                                        }
+                                        className="text-[10px] font-bold text-[#3B5BDB] hover:underline mt-0.5 inline-flex items-center gap-1 cursor-pointer"
+                                      >
+                                        <Eye size={10} /> View Receipt
+                                      </button>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <div className="p-3 bg-[#F8FAFC] rounded-xl border border-dashed border-[#E2E8F0] text-center text-[#94A3B8]">
+                                No payment has been processed yet for this fee.
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="py-8 text-center text-[#64748B]">
+                          <Shirt size={28} className="mx-auto text-[#94A3B8] mb-2 opacity-50" />
+                          <p className="font-semibold text-sm">No Uniform Fee record assigned</p>
+                          <p className="text-[11px] text-[#94A3B8] mt-1">
+                            Contact AVK Administration if uniform allocation is required.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -538,7 +1045,329 @@ export function ParentDashboardPage() {
             </div>
           </div>
         )}
+
+        {/* My School Bus Tab */}
+        {activeTab === 'bus' && (
+          <div className="space-y-6">
+            {busData.bus && busData.assignment ? (
+              <>
+                {/* Bus Hero Card */}
+                <div className="bg-gradient-to-r from-[#172554] via-[#1E3A8A] to-[#3B5BDB] rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
+                  <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-white/5 transform skew-x-12 pointer-events-none" />
+                  <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-3xl shrink-0">
+                        🚌
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-xl font-black tracking-tight">{busData.bus.busNumber}</span>
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                              busData.bus.status === 'on_route'
+                                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30'
+                                : busData.bus.status === 'at_school'
+                                ? 'bg-blue-500/20 text-blue-300 border-blue-400/30'
+                                : 'bg-white/10 text-white/80 border-white/20'
+                            }`}
+                          >
+                            {busData.bus.status === 'on_route'
+                              ? '● On Route'
+                              : busData.bus.status === 'at_school'
+                              ? '● At School'
+                              : 'Not in Service'}
+                          </span>
+                        </div>
+                        <p className="text-xs text-white/80 font-mono">
+                          Reg: <span className="font-bold text-white">{busData.bus.registrationNo}</span>
+                        </p>
+                        <p className="text-xs text-white/70 mt-0.5">{busData.bus.model}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      <Link
+                        to="/parent/bus"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white/15 hover:bg-white/25 text-white text-xs font-bold rounded-xl border border-white/20 transition-colors"
+                      >
+                        <Bus size={14} />
+                        Full Details
+                      </Link>
+                      <Link
+                        to="/parent/bus/tracking"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white/15 hover:bg-white/25 text-white text-xs font-bold rounded-xl border border-white/20 transition-colors"
+                      >
+                        <Radio size={14} />
+                        Track Bus
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Info Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="bg-white p-5 rounded-xl border border-[#E2E8F0] shadow-xs">
+                    <p className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">Route Name</p>
+                    <p className="text-sm font-bold text-[#172033]">{busData.route?.name || busData.bus.routeName}</p>
+                  </div>
+                  <div className="bg-white p-5 rounded-xl border border-[#E2E8F0] shadow-xs">
+                    <p className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">Pickup Stop</p>
+                    <p className="text-sm font-bold text-[#172033]">{busData.assignment.pickupStopName}</p>
+                    <p className="text-[11px] text-[#64748B] mt-0.5">{busData.assignment.pickupTime}</p>
+                  </div>
+                  <div className="bg-white p-5 rounded-xl border border-[#E2E8F0] shadow-xs">
+                    <p className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">Drop-off Stop</p>
+                    <p className="text-sm font-bold text-[#172033]">{busData.assignment.dropStopName}</p>
+                    <p className="text-[11px] text-[#64748B] mt-0.5">{busData.assignment.dropTime}</p>
+                  </div>
+                  <div className="bg-white p-5 rounded-xl border border-[#E2E8F0] shadow-xs">
+                    <p className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">Capacity</p>
+                    <p className="text-sm font-bold text-[#172033]">{busData.bus.occupiedSeats} / {busData.bus.capacity} Seats</p>
+                  </div>
+                </div>
+
+                {/* Driver & Caretaker */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {busData.driver && (
+                    <div className="bg-white rounded-xl border border-[#E2E8F0] p-5 shadow-xs">
+                      <h4 className="text-xs font-bold text-[#172033] uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <Users size={14} className="text-[#3B5BDB]" />
+                        Driver
+                      </h4>
+                      <p className="text-sm font-bold text-[#172033]">{busData.driver.name}</p>
+                      <p className="text-xs text-[#64748B] font-mono mt-1">{busData.driver.phone}</p>
+                      <a
+                        href={`tel:${busData.driver.phone}`}
+                        className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#16A36A] text-white text-xs font-bold rounded-lg hover:bg-[#138A5A] transition-colors"
+                      >
+                        <Phone size={12} />
+                        Call Driver
+                      </a>
+                    </div>
+                  )}
+                  {busData.caretaker && (
+                    <div className="bg-white rounded-xl border border-[#E2E8F0] p-5 shadow-xs">
+                      <h4 className="text-xs font-bold text-[#172033] uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <Users size={14} className="text-[#16A36A]" />
+                        Conductor / Caretaker
+                      </h4>
+                      <p className="text-sm font-bold text-[#172033]">{busData.caretaker.name}</p>
+                      <p className="text-xs text-[#64748B] font-mono mt-1">{busData.caretaker.phone}</p>
+                      <a
+                        href={`tel:${busData.caretaker.phone}`}
+                        className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#3B5BDB] text-white text-xs font-bold rounded-lg hover:bg-[#2B4BC9] transition-colors"
+                      >
+                        <Phone size={12} />
+                        Call Caretaker
+                      </a>
+                    </div>
+                  )}
+                </div>
+
+                {/* Navigation Links to Sub-pages */}
+                <div className="bg-white rounded-xl border border-[#E2E8F0] p-5 shadow-xs">
+                  <h4 className="text-xs font-bold text-[#172033] uppercase tracking-wider mb-3">Bus Section Pages</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <Link
+                      to="/parent/bus"
+                      className="flex items-center gap-3 p-3 rounded-lg border border-[#E2E8F0] hover:bg-[#F8FAFC] transition-colors group"
+                    >
+                      <div className="w-9 h-9 rounded-lg bg-[#EDF2FF] text-[#3B5BDB] flex items-center justify-center shrink-0 group-hover:bg-[#3B5BDB] group-hover:text-white transition-colors">
+                        <Bus size={16} />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-[#172033]">Bus Overview</p>
+                        <p className="text-[10px] text-[#94A3B8]">Full bus details</p>
+                      </div>
+                    </Link>
+                    <Link
+                      to="/parent/bus/route"
+                      className="flex items-center gap-3 p-3 rounded-lg border border-[#E2E8F0] hover:bg-[#F8FAFC] transition-colors group"
+                    >
+                      <div className="w-9 h-9 rounded-lg bg-[#EDF2FF] text-[#3B5BDB] flex items-center justify-center shrink-0 group-hover:bg-[#3B5BDB] group-hover:text-white transition-colors">
+                        <Navigation size={16} />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-[#172033]">My Bus Route</p>
+                        <p className="text-[10px] text-[#94A3B8]">Route & stop timings</p>
+                      </div>
+                    </Link>
+                    <Link
+                      to="/parent/bus/tracking"
+                      className="flex items-center gap-3 p-3 rounded-lg border border-[#E2E8F0] hover:bg-[#F8FAFC] transition-colors group"
+                    >
+                      <div className="w-9 h-9 rounded-lg bg-[#EDF2FF] text-[#3B5BDB] flex items-center justify-center shrink-0 group-hover:bg-[#3B5BDB] group-hover:text-white transition-colors">
+                        <Radio size={16} />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-[#172033]">Live Tracking</p>
+                        <p className="text-[10px] text-[#94A3B8]">GPS bus location</p>
+                      </div>
+                    </Link>
+                    <Link
+                      to="/parent/bus/notifications"
+                      className="flex items-center gap-3 p-3 rounded-lg border border-[#E2E8F0] hover:bg-[#F8FAFC] transition-colors group"
+                    >
+                      <div className="w-9 h-9 rounded-lg bg-[#EDF2FF] text-[#3B5BDB] flex items-center justify-center shrink-0 group-hover:bg-[#3B5BDB] group-hover:text-white transition-colors">
+                        <Bell size={16} />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-[#172033]">Notifications</p>
+                        <p className="text-[10px] text-[#94A3B8]">Bus alerts & updates</p>
+                      </div>
+                    </Link>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="bg-white rounded-2xl border border-[#E2E8F0] p-10 text-center shadow-xs max-w-xl mx-auto">
+                <div className="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-4">
+                  <Bus size={32} />
+                </div>
+                <h2 className="text-lg font-bold text-[#172033]">Transport Status</h2>
+                <p className="text-sm font-semibold text-[#B45309] mt-2 mb-3">
+                  No school bus has been assigned to this student yet.
+                </p>
+                <p className="text-xs text-[#64748B] leading-relaxed">
+                  {activeStudent.first_name} does not have an active bus allocation. Please contact the AVK Transport Coordinator for bus enrolment.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </main>
+
+      {/* Official AVK Receipt Modal for Parents */}
+      <Modal
+        isOpen={!!parentReceiptModal}
+        onClose={() => setParentReceiptModal(null)}
+        title="Official School Payment Receipt"
+        description="AVK International Residential Senior Secondary School official receipt record."
+        size="lg"
+      >
+        {parentReceiptModal && (
+          <div className="space-y-4 text-xs">
+            <div className="bg-white border-2 border-[#172554] rounded-2xl p-5 space-y-4">
+              <div className="text-center border-b border-[#172554]/20 pb-3">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                    <img
+                      src="/avk-logo.svg"
+                      alt="AVK Emblem"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-black text-[#172554] tracking-tight uppercase">
+                      AVK INTERNATIONAL RESIDENTIAL SENIOR SECONDARY SCHOOL
+                    </h2>
+                    <p className="text-[10px] font-bold text-amber-700">
+                      Affiliated to CBSE New-Delhi &bull; Affiliation No: 1930319
+                    </p>
+                  </div>
+                </div>
+                <div className="inline-block mt-1 px-3 py-0.5 rounded-full bg-[#172554] text-white font-bold text-[9px] uppercase tracking-wider">
+                  Payment Receipt Voucher
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-[#F8FAFC] p-2.5 rounded-xl border border-[#E2E8F0]">
+                <div>
+                  <p className="text-[9px] text-[#64748B]">Receipt Number</p>
+                  <p className="font-mono font-bold text-[#172033]">{parentReceiptModal.payment.receiptNumber}</p>
+                </div>
+                <div>
+                  <p className="text-[9px] text-[#64748B]">Payment Date</p>
+                  <p className="font-semibold text-[#172033]">{parentReceiptModal.payment.paymentDate}</p>
+                </div>
+                <div>
+                  <p className="text-[9px] text-[#64748B]">Payment Mode</p>
+                  <p className="font-semibold text-[#172033]">{parentReceiptModal.payment.paymentMode}</p>
+                </div>
+                <div>
+                  <p className="text-[9px] text-[#64748B]">Academic Year</p>
+                  <p className="font-semibold text-[#172033]">{parentReceiptModal.fee.academicYear}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-2.5 bg-white rounded-xl border border-[#E2E8F0]">
+                <div>
+                  <p className="text-[9px] text-[#64748B]">Student Name</p>
+                  <p className="font-bold text-[#172033]">{parentReceiptModal.fee.studentName}</p>
+                  <p className="text-[10px] text-[#64748B]">
+                    Class: <strong>{parentReceiptModal.fee.className} • {parentReceiptModal.fee.sectionName}</strong>
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[9px] text-[#64748B]">Admission Number</p>
+                  <p className="font-mono font-bold text-[#3B5BDB]">{parentReceiptModal.fee.admissionNumber}</p>
+                  {parentReceiptModal.payment.transactionReference && (
+                    <p className="text-[9px] text-[#64748B] font-mono mt-0.5">
+                      Ref: {parentReceiptModal.payment.transactionReference}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="border border-[#E2E8F0] rounded-xl overflow-hidden">
+                <div className="bg-[#F1F5F9] p-2 flex items-center justify-between font-bold text-[10px] text-[#64748B] uppercase">
+                  <span>Fee Category Description</span>
+                  <span>Amount Paid</span>
+                </div>
+                <div className="p-2.5 flex items-center justify-between">
+                  <div>
+                    <p className="font-bold text-[#172033]">{parentReceiptModal.fee.description}</p>
+                    <p className="text-[10px] text-[#64748B]">
+                      {parentReceiptModal.fee.items.map((i) => i.name).join(', ')}
+                    </p>
+                  </div>
+                  <span className="font-mono font-bold text-sm text-[#16A36A]">
+                    {formatCurrency(parentReceiptModal.payment.amount)}
+                  </span>
+                </div>
+                <div className="bg-[#F8FAFC] p-2 border-t border-[#E2E8F0] flex items-center justify-between text-[11px]">
+                  <span className="font-semibold text-[#64748B]">Remaining Balance Outstanding:</span>
+                  <span className="font-mono font-bold text-[#172033]">
+                    {formatCurrency(parentReceiptModal.fee.balanceAmount)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 border-t border-[#E2E8F0] text-[10px] text-[#64748B]">
+                <span>Status: Verified Official Voucher</span>
+                <span className="font-bold text-[#172033]">AVK Accounts Section</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-2">
+              <Button
+                variant="outline"
+                onClick={() => setParentReceiptModal(null)}
+              >
+                Close
+              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  className="bg-[#3B5BDB] hover:bg-[#2B4BC9] text-white font-bold"
+                  onClick={() => window.print()}
+                >
+                  <Printer size={14} className="mr-1.5" />
+                  Print Receipt
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    alert(`Official receipt ${parentReceiptModal.payment.receiptNumber} downloaded.`);
+                  }}
+                >
+                  <Download size={14} className="mr-1.5" />
+                  Download PDF
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

@@ -9,6 +9,10 @@ import { WelcomeLandingPage } from '@/pages/landing/WelcomeLandingPage';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { ParentLoginPage } from '@/pages/auth/ParentLoginPage';
 import { ParentDashboardPage } from '@/pages/parent/ParentDashboardPage';
+import { ParentBusOverviewPage } from '@/pages/parent/ParentBusOverviewPage';
+import { ParentBusRoutePage } from '@/pages/parent/ParentBusRoutePage';
+import { ParentBusTrackingPage } from '@/pages/parent/ParentBusTrackingPage';
+import { ParentBusNotificationsPage } from '@/pages/parent/ParentBusNotificationsPage';
 import { SuperAdminDashboardPage } from '@/pages/dashboard/SuperAdminDashboardPage';
 import { SchoolAdminDashboardPage } from '@/pages/dashboard/SchoolAdminDashboardPage';
 import { TeacherDashboardPage } from '@/pages/dashboard/TeacherDashboardPage';
@@ -19,6 +23,7 @@ import { TeachersPage } from '@/pages/teachers/TeachersPage';
 import { AttendancePage } from '@/pages/attendance/AttendancePage';
 import { ExaminationsPage } from '@/pages/examinations/ExaminationsPage';
 import { FeesPage } from '@/pages/fees/FeesPage';
+import { BookUniformFeesPage } from '@/pages/fees/BookUniformFeesPage';
 import { TimetablePage } from '@/pages/timetable/TimetablePage';
 import { NoticesPage } from '@/pages/notices/NoticesPage';
 import { MaterialsPage } from '@/pages/materials/MaterialsPage';
@@ -33,6 +38,8 @@ import { AcademicSessionsPage } from '@/pages/academic/AcademicSessionsPage';
 import { ClassesPage } from '@/pages/academic/ClassesPage';
 import { TeacherAssignmentsPage } from '@/pages/academic/TeacherAssignmentsPage';
 import { StudentPromotionsPage } from '@/pages/academic/StudentPromotionsPage';
+import { TransportPage } from '@/pages/transport/TransportPage';
+import { StudentTransportPage } from '@/pages/transport/StudentTransportPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -148,6 +155,38 @@ function AppRoutes() {
         element={
           <ProtectedParentRoute>
             <ParentDashboardPage />
+          </ProtectedParentRoute>
+        }
+      />
+      <Route
+        path="/parent/bus"
+        element={
+          <ProtectedParentRoute>
+            <ParentBusOverviewPage />
+          </ProtectedParentRoute>
+        }
+      />
+      <Route
+        path="/parent/bus/route"
+        element={
+          <ProtectedParentRoute>
+            <ParentBusRoutePage />
+          </ProtectedParentRoute>
+        }
+      />
+      <Route
+        path="/parent/bus/tracking"
+        element={
+          <ProtectedParentRoute>
+            <ParentBusTrackingPage />
+          </ProtectedParentRoute>
+        }
+      />
+      <Route
+        path="/parent/bus/notifications"
+        element={
+          <ProtectedParentRoute>
+            <ParentBusNotificationsPage />
           </ProtectedParentRoute>
         }
       />
@@ -303,6 +342,14 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/fees/books-uniform"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin', 'accountant']}>
+              <BookUniformFeesPage />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/timetable"
@@ -371,6 +418,23 @@ function AppRoutes() {
           element={
             <ProtectedRoute allowedRoles={['super_admin', 'school_admin', 'teacher', 'accountant']}>
               <NotificationsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/transport"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin']}>
+              <TransportPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/transport/students"
+          element={
+            <ProtectedRoute allowedRoles={['super_admin', 'school_admin']}>
+              <StudentTransportPage />
             </ProtectedRoute>
           }
         />

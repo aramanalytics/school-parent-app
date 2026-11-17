@@ -31,6 +31,7 @@ import {
   Award,
   Wallet,
   TrendingUp,
+  Bus,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth, RoleType } from '@/contexts/AuthContext';
@@ -71,7 +72,17 @@ export const superAdminNavItems: NavItem[] = [
     href: '/fees',
     children: [
       { label: 'Fee Structures', href: '/fees' },
+      { label: 'Books & Uniform Fees', href: '/fees/books-uniform' },
       { label: 'Revenue Overview', href: '/fees' },
+    ],
+  },
+  {
+    label: 'Transport Management',
+    icon: Bus,
+    href: '/transport',
+    children: [
+      { label: 'Fleet & Buses', href: '/transport' },
+      { label: 'Student Assignments', href: '/transport/students' },
     ],
   },
   { label: 'Reports & Analytics', icon: TrendingUp, href: '/attendance' },
@@ -116,6 +127,24 @@ export const schoolAdminNavItems: NavItem[] = [
   { label: 'School Calendar', icon: Calendar, href: '/calendar' },
   { label: 'Parent Feedback', icon: MessageSquare, href: '/feedback', badge: '1' },
   { label: 'Notifications', icon: Bell, href: '/notifications' },
+  {
+    label: 'Fee Management',
+    icon: CreditCard,
+    href: '/fees',
+    children: [
+      { label: 'General Fees', href: '/fees' },
+      { label: 'Books & Uniform Fees', href: '/fees/books-uniform' },
+    ],
+  },
+  {
+    label: 'Transport Management',
+    icon: Bus,
+    href: '/transport',
+    children: [
+      { label: 'Fleet & Tracking', href: '/transport' },
+      { label: 'Student Assignments', href: '/transport/students' },
+    ],
+  },
   { label: 'School Settings', icon: Settings, href: '/settings' },
 ];
 
@@ -153,6 +182,7 @@ export const accountantNavItems: NavItem[] = [
     children: [
       { label: 'Fee Categories', href: '/fees' },
       { label: 'Student Fee Invoices', href: '/fees' },
+      { label: 'Books & Uniform Fees', href: '/fees/books-uniform' },
       { label: 'Payment Records', href: '/fees' },
     ],
   },
@@ -194,6 +224,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     'Academics',
     'Academic Setup',
     'Fee Setup & Invoices',
+    'Transport Management',
   ]);
 
   const toggleGroup = (label: string) => {
@@ -217,17 +248,27 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       )}
     >
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-white/10 shrink-0">
-        <Link to="/" className="flex items-center gap-3 overflow-hidden">
-          <div className="w-9 h-9 bg-gradient-to-tr from-[#3B5BDB] to-[#4C6EF5] rounded-xl flex items-center justify-center shrink-0 shadow-sm ring-1 ring-white/20">
-            <GraduationCap size={20} className="text-white" />
+      <div className="h-16 flex items-center justify-between px-3.5 border-b border-white/10 shrink-0">
+        <Link to="/" className="flex items-center gap-2.5 overflow-hidden group">
+          <div className="w-9 h-9 rounded-full shrink-0 flex items-center justify-center">
+            <img
+              src="/avk-logo.svg"
+              alt="AVK Logo"
+              className="w-full h-full object-contain aspect-square"
+            />
           </div>
           {!collapsed && (
             <div className="min-w-0">
-              <span className="font-bold text-sm text-white tracking-tight block truncate">
-                Sunrise School
+              <span
+                className="font-black text-xs text-white tracking-tight block truncate uppercase leading-tight"
+                title="AVK INTERNATIONAL RESIDENTIAL SENIOR SECONDARY SCHOOL"
+              >
+                AVK Senior Secondary
               </span>
-              <span className="text-[10px] text-white/60 tracking-wider uppercase block">
+              <span className="text-[9px] text-amber-300 font-semibold block truncate">
+                CBSE New-Delhi &bull; 1930319
+              </span>
+              <span className="text-[9px] text-white/50 tracking-wider uppercase block truncate">
                 {roleMeta[currentRole].label}
               </span>
             </div>
@@ -342,7 +383,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       <div className="p-3 border-t border-white/10 shrink-0">
         {!collapsed ? (
           <div className="flex items-center justify-between px-2 py-1 text-[11px] text-white/60">
-            <span>Sunrise Edu v2.4</span>
+            <span>AVK Portal v2.4</span>
             <span className="flex items-center gap-1 text-emerald-400 font-medium">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               Connected

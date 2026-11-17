@@ -8,12 +8,12 @@ import { useToast } from '@/components/ui/Toast';
 export function SettingsPage() {
   const { toast } = useToast();
   const [schoolName, setSchoolName] = useState(
-    'Sunrise International Matriculation Higher Secondary School'
+    'AVK INTERNATIONAL RESIDENTIAL SENIOR SECONDARY SCHOOL'
   );
-  const [affiliationCode, setAffiliationCode] = useState('TN-MATRIC-2014-9912');
+  const [affiliationCode, setAffiliationCode] = useState('1930319');
   const [phone, setPhone] = useState('+91 44 2852 9000');
-  const [email, setEmail] = useState('info@sunriseschool.edu.in');
-  const [address, setAddress] = useState('142, Anna Salai, Chennai, Tamil Nadu 600002');
+  const [email, setEmail] = useState('avkschools@gmail.com');
+  const [address, setAddress] = useState('188, Rajapalayam Main Road, Sankarankovil, Tenkasi District, Tamil Nadu – 627756');
   const [currentYear, setCurrentYear] = useState('2026 - 2027');
 
   const handleSave = () => {

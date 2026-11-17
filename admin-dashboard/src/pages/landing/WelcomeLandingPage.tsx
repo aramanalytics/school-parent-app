@@ -109,7 +109,7 @@ function EcosystemCard({ shouldReduceMotion }: { shouldReduceMotion: boolean | n
 
   return (
     <div className="relative my-8 sm:my-10 w-full max-w-2xl perspective-1000">
-      {/* 3B: Sunrise Radial Glow behind the ecosystem card */}
+      {/* 3B: Ambient Radial Glow behind the ecosystem card */}
       <div
         className="absolute inset-0 -inset-x-8 -inset-y-8 bg-gradient-to-r from-[#3B5BDB]/25 via-[#8B5CF6]/30 to-[#38BDF8]/20 rounded-full blur-3xl pointer-events-none animate-sunrise-glow"
         aria-hidden="true"
@@ -232,21 +232,25 @@ function EcosystemCard({ shouldReduceMotion }: { shouldReduceMotion: boolean | n
             />
           )}
 
-          <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-gradient-to-tr from-[#172554] via-[#3B5BDB] to-[#8B5CF6] flex items-center justify-center text-white shrink-0 shadow-xl ring-4 ring-[#DBE4FF]">
-            <School size={56} className="text-white drop-shadow-md" />
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white p-2 flex items-center justify-center shrink-0 shadow-xl ring-4 ring-[#DBE4FF]">
+            <img
+              src="/avk-logo.svg"
+              alt="AVK Emblem"
+              className="w-full h-full object-contain aspect-square"
+            />
           </div>
 
           <div className="text-center sm:text-left flex-1 min-w-0">
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1.5">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#3B5BDB]/10 text-[#3B5BDB]">
-                State-of-the-Art Infrastructure
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#172554]/10 text-[#172554]">
+                Senior Secondary & Residential
               </span>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#16A36A]/10 text-[#16A36A]">
-                CBSE & Matriculation
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-600/10 text-amber-800 border border-amber-200">
+                Affiliated to CBSE New-Delhi &bull; 1930319
               </span>
             </div>
-            <h2 className="text-lg sm:text-xl font-bold text-[#172554] leading-tight">
-              Sunrise Digital Campus Ecosystem
+            <h2 className="text-lg sm:text-xl font-black text-[#172554] leading-tight uppercase">
+              AVK Digital Campus Ecosystem
             </h2>
             <p className="text-xs text-[#64748B] mt-1 leading-relaxed">
               Real-time attendance registers, continuous academic assessments, secure fee invoicing, and transparent parent-teacher communications.
@@ -510,7 +514,7 @@ export function WelcomeLandingPage() {
         style={{ scaleX }}
       />
 
-      {/* 3: BACKGROUND ANIMATION LAYER (Orbs, Sunrise Glow, Particles) */}
+      {/* 3: BACKGROUND ANIMATION LAYER (Orbs, Ambient Glow, Particles) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
         {/* 3A: Slowly Drifting Gradient Orbs */}
         {driftingOrbs.map((orb, idx) => (
@@ -571,27 +575,32 @@ export function WelcomeLandingPage() {
       >
         <div className="flex items-center gap-3">
           {/* 6B: Logo with Bounce, Rotation & Glow on Hover */}
+          {/* Official AVK Emblem with Hover Glow */}
           <motion.div
             whileHover={
               shouldReduceMotion
                 ? {}
                 : {
-                    scale: 1.12,
-                    rotate: [0, -8, 8, 0],
-                    boxShadow: '0 0 25px rgba(59, 91, 219, 0.45)',
+                    scale: 1.08,
+                    rotate: [0, -4, 4, 0],
+                    boxShadow: '0 0 25px rgba(217, 119, 6, 0.35)',
                     transition: { duration: 0.45 },
                   }
             }
-            className="w-11 h-11 bg-gradient-to-tr from-[#172554] via-[#3B5BDB] to-[#8B5CF6] rounded-2xl flex items-center justify-center shadow-lg shadow-[#3B5BDB]/25 ring-2 ring-white cursor-pointer"
+            className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 cursor-pointer drop-shadow-md"
           >
-            <GraduationCap size={24} className="text-white" />
+            <img
+              src="/avk-logo.svg"
+              alt="AVK Logo Emblem"
+              className="w-full h-full object-contain aspect-square"
+            />
           </motion.div>
-          <div>
-            <span className="font-extrabold text-base sm:text-lg text-[#172554] tracking-tight block leading-tight">
-              Sunrise International School
+          <div className="max-w-md sm:max-w-xl">
+            <span className="font-black text-xs sm:text-sm md:text-base text-[#172554] tracking-tight block leading-tight uppercase">
+              AVK INTERNATIONAL RESIDENTIAL SENIOR SECONDARY SCHOOL
             </span>
-            <span className="text-[11px] font-semibold text-[#64748B] tracking-wider uppercase">
-              Excellence in Education • Estd. 1998
+            <span className="text-[10px] sm:text-xs font-bold text-amber-700 tracking-wide block mt-0.5">
+              Affiliated to CBSE New-Delhi &bull; Affiliation No: 1930319
             </span>
           </div>
         </div>
@@ -609,7 +618,7 @@ export function WelcomeLandingPage() {
       {/* HERO SECTION */}
       <main className="relative z-10 w-full max-w-7xl mx-auto px-6 py-6 md:py-10 flex-1 flex flex-col items-center justify-center">
         {/* 2: Welcome Text Sequence with Word-by-Word Animation */}
-        <div className="text-center max-w-3xl mx-auto space-y-3">
+        <div className="text-center max-w-4xl mx-auto space-y-4">
           {/* Spring entrance pill with rotating sparkle */}
           <motion.div
             variants={springPillVariant}
@@ -626,26 +635,37 @@ export function WelcomeLandingPage() {
             variants={staggerContainer}
             initial="hidden"
             animate="visible"
-            className="text-3xl sm:text-5xl md:text-6xl font-black text-[#172554] tracking-tight leading-[1.15]"
+            className="text-2xl sm:text-4xl md:text-5xl font-black text-[#172554] tracking-tight leading-[1.2] uppercase"
           >
             {headingWords.map((word, i) => (
               <motion.span
                 key={i}
                 variants={wordVariants}
-                className="inline-block mr-2 sm:mr-3"
+                className="inline-block mr-2 sm:mr-3 text-slate-800"
               >
                 {word}
               </motion.span>
             ))}
 
-            {/* "Sunrise School" with Indigo -> Violet -> Royal Blue animated gradient shimmer */}
             <motion.span
               variants={wordVariants}
-              className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#3B5BDB] via-[#8B5CF6] to-[#4F46E5] animate-text-shimmer"
+              className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#172554] via-[#1E3A8A] to-[#3B5BDB]"
             >
-              Sunrise School
+              AVK INTERNATIONAL RESIDENTIAL SENIOR SECONDARY SCHOOL
             </motion.span>
           </motion.h1>
+
+          {/* Affiliation Details Callout Pill */}
+          <motion.div
+            variants={fadeUpVariant}
+            initial="hidden"
+            animate="visible"
+            className="inline-flex flex-wrap items-center justify-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 border border-amber-200/90 text-amber-900 text-xs sm:text-sm font-bold shadow-xs mx-auto"
+          >
+            <span>Affiliated to CBSE New-Delhi</span>
+            <span className="text-amber-400">&bull;</span>
+            <span>Affiliation No: 1930319</span>
+          </motion.div>
 
           {/* Subtitle with slight upward movement and smooth transition */}
           <motion.p
@@ -653,13 +673,13 @@ export function WelcomeLandingPage() {
             initial="hidden"
             animate="visible"
             transition={{ delay: 0.35 }}
-            className="text-sm sm:text-lg text-[#475569] font-medium max-w-2xl mx-auto"
+            className="text-sm sm:text-base text-[#475569] font-medium max-w-2xl mx-auto"
           >
             Connecting Parents, Teachers & Students through an intelligent, seamless and modern digital campus experience.
           </motion.p>
         </div>
 
-        {/* 4: SUNRISE DIGITAL CAMPUS ECOSYSTEM CARD */}
+        {/* 4: AVK DIGITAL CAMPUS ECOSYSTEM CARD */}
         <EcosystemCard shouldReduceMotion={shouldReduceMotion} />
 
         {/* 7: CHOOSE YOUR PORTAL SECTION WITH SCROLL REVEAL */}
@@ -740,9 +760,16 @@ export function WelcomeLandingPage() {
       </main>
 
       {/* FOOTER */}
-      <footer className="relative z-10 w-full border-t border-[#E2E8F0]/80 bg-white/40 backdrop-blur-md py-4 px-6 text-center text-xs text-[#64748B]">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p>© 2026 Sunrise International School. All rights reserved.</p>
+      <footer className="relative z-10 w-full border-t border-[#E2E8F0]/80 bg-white/70 backdrop-blur-md py-4 px-6 text-center text-xs text-[#64748B]">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+          <div className="text-left">
+            <p className="font-bold text-[#172554]">
+              &copy; 2026 AVK INTERNATIONAL RESIDENTIAL SENIOR SECONDARY SCHOOL. All rights reserved.
+            </p>
+            <p className="text-[11px] text-amber-700 font-semibold">
+              Affiliated to CBSE New-Delhi &bull; Affiliation No: 1930319
+            </p>
+          </div>
           <div className="flex items-center gap-4 text-[11px]">
             <span className="flex items-center gap-1">
               <Lock size={12} className="text-emerald-600" />

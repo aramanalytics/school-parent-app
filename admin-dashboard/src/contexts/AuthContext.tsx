@@ -42,7 +42,7 @@ const defaultSchoolAdminRole: UserRoleInfo = {
   role: 'school_admin',
   school_id: '11111111-1111-1111-1111-111111111111',
   full_name: 'Dr. K. Sundararajan (Principal)',
-  email: 'admin@sunriseschool.edu.in',
+  email: 'admin@avkirs.ac.in',
 };
 
 const roleProfiles: Record<RoleType, UserRoleInfo> = {
@@ -50,26 +50,26 @@ const roleProfiles: Record<RoleType, UserRoleInfo> = {
     role: 'super_admin',
     school_id: '11111111-1111-1111-1111-111111111111',
     full_name: 'Chief Admin (System Director)',
-    email: 'superadmin@sunriseschool.edu.in',
+    email: 'superadmin@avkirs.ac.in',
   },
   school_admin: {
     role: 'school_admin',
     school_id: '11111111-1111-1111-1111-111111111111',
     full_name: 'Dr. K. Sundararajan (Principal)',
-    email: 'admin@sunriseschool.edu.in',
+    email: 'admin@avkirs.ac.in',
   },
   teacher: {
     role: 'teacher',
     school_id: '11111111-1111-1111-1111-111111111111',
     full_name: 'M. Saravanan (Senior Teacher)',
-    email: 'saravanan.m@sunriseschool.edu.in',
+    email: 'saravanan.m@avkirs.ac.in',
     teacher_id: 'bbbbbbbb-1111-bbbb-bbbb-bbbbbbbb0001',
   },
   accountant: {
     role: 'accountant',
     school_id: '11111111-1111-1111-1111-111111111111',
     full_name: 'R. Venkat (Senior Accountant)',
-    email: 'accountant@sunriseschool.edu.in',
+    email: 'accountant@avkirs.ac.in',
   },
 };
 

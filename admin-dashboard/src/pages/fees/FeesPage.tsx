@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   CreditCard,
   Plus,
@@ -9,6 +10,7 @@ import {
   FileText,
   Printer,
   Eye,
+  BookOpen,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -219,9 +221,16 @@ export function FeesPage() {
             Fee categories, payment collections, invoice generation, and pending balances
           </p>
         </div>
-        <Button size="sm">
-          <Plus size={14} /> Assign Fee Category
-        </Button>
+        <div className="flex items-center gap-2">
+          <Link to="/fees/books-uniform">
+            <Button variant="outline" size="sm" className="font-semibold text-xs text-[#3B5BDB] border-[#3B5BDB]/30 hover:bg-[#3B5BDB]/10">
+              <BookOpen size={14} className="mr-1.5" /> Books & Uniform Fees
+            </Button>
+          </Link>
+          <Button size="sm">
+            <Plus size={14} /> Assign Fee Category
+          </Button>
+        </div>
       </div>
 
       {/* KPI Cards */}
@@ -368,9 +377,10 @@ export function FeesPage() {
             <div className="p-6 rounded-xl border border-[#E2E8F0] bg-white space-y-4 shadow-xs">
               <div className="text-center border-b border-[#E2E8F0] pb-4">
                 <h3 className="text-base font-bold text-[#172554]">
-                  SUNRISE INTERNATIONAL SCHOOL
+                  AVK INTERNATIONAL RESIDENTIAL SENIOR SECONDARY SCHOOL
                 </h3>
-                <p className="text-[11px] text-[#64748B]">142, Anna Salai, Chennai, TN 600002</p>
+                <p className="text-[11px] text-[#64748B]">188, Rajapalayam Main Road, Sankarankovil, Tenkasi District, Tamil Nadu – 627756</p>
+                <p className="text-[10px] text-[#64748B] mt-0.5">Affiliated to CBSE New-Delhi | Affiliation No: 1930319</p>
                 <p className="text-[10px] text-[#3B5BDB] font-mono mt-1">
                   OFFICIAL PAYMENT RECEIPT
                 </p>

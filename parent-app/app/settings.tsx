@@ -119,7 +119,7 @@ export default function SettingsScreen() {
       <View style={styles.card}>
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>School</Text>
-          <Text style={styles.infoValue}>Sunrise International School</Text>
+          <Text style={styles.infoValue}>AVK International Residential Senior Secondary School</Text>
         </View>
         <View style={styles.divider} />
         <View style={styles.infoRow}>

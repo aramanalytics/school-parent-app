@@ -128,7 +128,7 @@ export function SuperAdminDashboardPage() {
             </div>
             <h1 className="text-2xl font-bold tracking-tight">Super Administrator Control Center</h1>
             <p className="text-xs text-white/80 mt-1 max-w-xl">
-              High-level institutional oversight, system health diagnostics, role authorization policies, and institutional financial aggregation across Sunrise Educational Trust.
+              High-level institutional oversight, system health diagnostics, role authorization policies, and institutional financial aggregation across AVK Educational Trust.
             </p>
           </div>
 

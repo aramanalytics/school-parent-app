@@ -8,4 +8,5 @@ export { DataTable } from './DataTable';
 export type { Column } from './DataTable';
 export { Modal } from './Modal';
 export { ToastProvider, useToast } from './Toast';
+export { AVKLogo } from './AVKLogo';
 

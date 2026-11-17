@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="100%" height="100%">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE68A" />
+      <stop offset="40%" stop-color="#F59E0B" />
+      <stop offset="70%" stop-color="#D97706" />
+      <stop offset="100%" stop-color="#B45309" />
+    </linearGradient>
+    <linearGradient id="navyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E3A8A" />
+      <stop offset="50%" stop-color="#172554" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+    <linearGradient id="shieldBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F1F5F9" />
+    </linearGradient>
+    <filter id="dropShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <!-- Outer Golden Starburst / Scalloped Ring -->
+  <circle cx="120" cy="120" r="114" fill="url(#goldGradient)" filter="url(#dropShadow)" />
+  <circle cx="120" cy="120" r="108" fill="#172554" stroke="url(#goldGradient)" stroke-width="2.5" />
+
+  <!-- Dotted Beaded Ring -->
+  <circle cx="120" cy="120" r="102" fill="none" stroke="#FDE68A" stroke-width="1.5" stroke-dasharray="2.5 3.5" />
+
+  <!-- Outer Text Ribbon Paths -->
+  <path id="topCurvedPath" d="M 32 120 A 88 88 0 0 1 208 120" fill="none" />
+  <path id="bottomCurvedPath" d="M 204 128 A 86 86 0 0 1 36 128" fill="none" />
+
+  <!-- Circular Ring Inscription -->
+  <text font-family="'Cinzel', 'Times New Roman', serif" font-size="11.5" font-weight="800" fill="#FDE68A" letter-spacing="2.8">
+    <textPath href="#topCurvedPath" startOffset="50%" text-anchor="middle">
+      AVK INTERNATIONAL RESIDENTIAL
+    </textPath>
+  </text>
+  <text font-family="'Cinzel', 'Times New Roman', serif" font-size="9.5" font-weight="700" fill="#FDE68A" letter-spacing="2">
+    <textPath href="#bottomCurvedPath" startOffset="50%" text-anchor="middle">
+      SENIOR SECONDARY SCHOOL
+    </textPath>
+  </text>
+
+  <!-- Decorative Stars on Ring -->
+  <polygon points="120,28 122,33 127,33 123,36 125,41 120,38 115,41 117,36 113,33 118,33" fill="#FDE68A" />
+  <polygon points="34,120 36,124 40,124 37,127 38,131 35,128 31,131 33,127 29,124 33,124" fill="#FDE68A" />
+  <polygon points="206,120 208,124 212,124 209,127 210,131 207,128 203,131 205,127 201,124 205,124" fill="#FDE68A" />
+
+  <!-- Inner Medallion Border -->
+  <circle cx="120" cy="120" r="76" fill="url(#navyGradient)" stroke="url(#goldGradient)" stroke-width="3" />
+  <circle cx="120" cy="120" r="71" fill="#FFFFFF" />
+
+  <!-- Laurel Wreath Leaves (Left and Right) -->
+  <g fill="#D97706" opacity="0.85">
+    <!-- Left Wreath -->
+    <path d="M 62 120 C 60 100 70 80 84 68 C 82 74 76 88 78 102 C 80 114 74 126 62 120 Z" />
+    <path d="M 66 100 C 60 92 66 84 72 80 C 72 86 70 94 66 100 Z" />
+    <path d="M 72 82 C 68 74 76 68 82 66 C 80 72 78 78 72 82 Z" />
+    <!-- Right Wreath -->
+    <path d="M 178 120 C 180 100 170 80 156 68 C 158 74 164 88 162 102 C 160 114 166 126 178 120 Z" />
+    <path d="M 174 100 C 180 92 174 84 168 80 C 168 86 170 94 174 100 Z" />
+    <path d="M 168 82 C 172 74 164 68 158 66 C 160 72 162 78 168 82 Z" />
+  </g>
+
+  <!-- Central Shield -->
+  <path d="M 85 78 L 155 78 C 155 78 158 112 155 125 C 150 148 120 165 120 165 C 120 165 90 148 85 125 C 82 112 85 78 85 78 Z"
+        fill="url(#navyGradient)" stroke="url(#goldGradient)" stroke-width="2.5" />
+
+  <!-- Shield Inner Border -->
+  <path d="M 89 82 L 151 82 C 151 82 154 112 151 123 C 147 143 120 159 120 159 C 120 159 93 143 89 123 C 86 112 89 82 89 82 Z"
+        fill="none" stroke="#FDE68A" stroke-width="1" opacity="0.6" />
+
+  <!-- Torch / Flame of Knowledge at top of shield -->
+  <!-- Flaming Torch Base -->
+  <path d="M 115 106 L 125 106 L 123 115 L 117 115 Z" fill="url(#goldGradient)" />
+  <path d="M 113 104 L 127 104 L 125 106 L 115 106 Z" fill="#FDE68A" />
+  <!-- Radiant Flames -->
+  <path d="M 120 86 C 124 93 127 96 126 103 C 124 104 122 104 120 102 C 118 104 116 104 114 103 C 113 96 116 93 120 86 Z" fill="#F59E0B" />
+  <path d="M 120 90 C 122 94 124 97 123 101 C 122 102 121 102 120 101 C 119 102 118 102 117 101 C 116 97 118 94 120 90 Z" fill="#FDE68A" />
+
+  <!-- Monogram "AVK" Bold Golden Text across Shield -->
+  <text x="120" y="132" font-family="'Times New Roman', Georgia, serif" font-size="20" font-weight="900" fill="url(#goldGradient)" text-anchor="middle" letter-spacing="2">
+    AVK
+  </text>
+
+  <!-- Open Book of Learning -->
+  <g transform="translate(120, 148) scale(0.65)" stroke="#FDE68A" stroke-width="1.8" fill="none">
+    <path d="M 0 4 C -12 -3 -22 -3 -30 2 L -30 -16 C -22 -20 -12 -20 0 -14 C 12 -20 22 -20 30 -16 L 30 2 C 22 -3 12 -3 0 4 Z" fill="#1E3A8A" />
+    <path d="M 0 -14 L 0 4" />
+    <path d="M -24 -9 C -17 -12 -9 -12 -3 -8" stroke-width="1" />
+    <path d="M -24 -4 C -17 -7 -9 -7 -3 -3" stroke-width="1" />
+    <path d="M 24 -9 C 17 -12 9 -12 3 -8" stroke-width="1" />
+    <path d="M 24 -4 C 17 -7 9 -7 3 -3" stroke-width="1" />
+  </g>
+
+  <!-- Golden Scroll Ribbon for Motto at Bottom -->
+  <g filter="url(#dropShadow)">
+    <path d="M 44 175 L 68 165 L 68 180 Z" fill="#B45309" />
+    <path d="M 196 175 L 172 165 L 172 180 Z" fill="#B45309" />
+    <!-- Ribbon Front Arc -->
+    <path d="M 56 172 C 85 160 155 160 184 172 L 180 186 C 155 174 85 174 60 186 Z" fill="url(#goldGradient)" stroke="#92400E" stroke-width="1" />
+    <!-- Ribbon Motto Text -->
+    <text x="120" y="180" font-family="'Cinzel', 'Times New Roman', serif" font-size="8.5" font-weight="900" fill="#172554" text-anchor="middle" letter-spacing="1.2">
+      KNOWLEDGE IS POWER
+    </text>
+  </g>
+
+  <!-- CBSE Affiliation Sub-tag Badge -->
+  <rect x="72" y="194" width="96" height="15" rx="7.5" fill="#172554" stroke="url(#goldGradient)" stroke-width="1.2" />
+  <text x="120" y="204.5" font-family="system-ui, sans-serif" font-size="6.8" font-weight="700" fill="#FDE68A" text-anchor="middle" letter-spacing="0.5">
+    CBSE AFFILIATION : 1930319
+  </text>
+</svg>

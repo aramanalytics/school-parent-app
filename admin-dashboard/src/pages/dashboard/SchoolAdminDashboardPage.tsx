@@ -152,7 +152,7 @@ export function SchoolAdminDashboardPage() {
             <Badge variant="info">Campus Operations</Badge>
           </div>
           <p className="text-xs text-[#64748B] mt-1">
-            Sunrise International Matriculation Higher Secondary School • Academic Year 2026-2027
+            AVK International Residential Senior Secondary School • Academic Year 2026-2027
           </p>
         </div>
         <div className="flex items-center gap-2">

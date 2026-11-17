@@ -2,7 +2,7 @@ export type Language = 'en' | 'ta';
 
 export const translations = {
   en: {
-    appName: 'Sunrise School Parent App',
+    appName: 'AVK School Parent App',
     greeting: 'Welcome back,',
     parent: 'Parent',
     switchStudent: 'Switch Child',
@@ -55,6 +55,7 @@ export const translations = {
     more: {
       title: 'School Services & Features',
       studentProfile: 'Student Bio & Profile',
+      mySchoolBus: 'My School Bus & Tracking',
       timetable: 'Weekly Period Timetable',
       examResults: 'Examinations & Report Cards',
       learningMaterials: 'Study Materials & Videos',
@@ -78,7 +79,7 @@ export const translations = {
     },
   },
   ta: {
-    appName: 'சன்ரைஸ் பள்ளி பெற்றோர் செயலி',
+    appName: 'AVK பள்ளி பெற்றோர் செயலி',
     greeting: 'வணக்கம்,',
     parent: 'பெற்றோர்',
     switchStudent: 'மாணவரை மாற்று',
@@ -131,6 +132,7 @@ export const translations = {
     more: {
       title: 'பள்ளி சேவைகள்',
       studentProfile: 'மாணவர் சுயவிவரம்',
+      mySchoolBus: 'என் பள்ளிப் பேருந்து',
       timetable: 'வாராந்திர கால அட்டவணை',
       examResults: 'தேர்வு முடிவுகள்',
       learningMaterials: 'பாடக் குறிப்புகள் மற்றும் வீடியோக்கள்',

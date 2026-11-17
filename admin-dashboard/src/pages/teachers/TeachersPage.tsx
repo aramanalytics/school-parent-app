@@ -249,7 +249,7 @@ export function TeachersPage() {
             <Input
               label="Official Email"
               type="email"
-              placeholder="saravanan@sunriseschool.edu.in"
+              placeholder="staff@avkirs.ac.in"
               required
               error={errors.email?.message}
               {...register('email')}
